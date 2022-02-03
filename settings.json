@@ -1,0 +1,252 @@
+{
+	"commands": [
+		{
+			"name": "hello",
+			"description": "hello world"
+		},
+		{
+			"name": "gen",
+			"description": "generate message using Wikipedia pages"
+		},
+		{
+			"name": "xp",
+			"description": "get XP count"
+		},
+		{
+			"name": "bank-info",
+			"description": "bank information (NCoin, players etc)"
+		},
+		{
+			"name": "bank-createaccount",
+			"description": "Create bank account",
+			"options": [
+				{
+					"type": 6,
+					"name": "user",
+					"description": "User",
+					"required": true
+				},
+				{
+					"type": 3,
+					"name": "nick",
+					"description": "Minecraft nickname",
+					"required": true
+				},
+				{
+					"type": 3,
+					"name": "name",
+					"description": "Name of bank account",
+					"required": true
+				}
+			]
+		},
+		{
+			"name": "bank-changestatus",
+			"description": "Change status of a bank account",
+			"options": [
+				{
+					"type": 3,
+					"name": "id",
+					"description": "Bank account ID",
+					"required": true
+				},
+				{
+					"type": 3,
+					"name": "status",
+					"description": "Status",
+					"choices": [
+						{
+							"name": "Personal",
+							"value": "personal"
+						},
+						{
+							"name": "Professional",
+							"value": "professional"
+						}
+					],
+					"required": true
+				}
+			]
+		},
+		{
+			"name": "bank-getaccount",
+			"description": "Request bank account data",
+			"options": [
+				{
+					"type": 6,
+					"name": "user",
+					"description": "User",
+					"required": false
+				}
+			]
+		},
+		{
+			"name": "bank-changebalance",
+			"description": "Change balance of bank account",
+			"options": [
+				{
+					"type": 3,
+					"name": "action",
+					"description": "Action",
+					"choices": [
+						{
+							"name": "Add",
+							"value": "remove"
+						},
+						{
+							"name": "Remove",
+							"value": "remove"
+						},
+						{
+							"name": "Set",
+							"value": "set"
+						}
+					],
+					"required": true
+				},
+				{
+					"type": 4,
+					"name": "value",
+					"description": "Value",
+					"required": true
+				},
+				{
+					"type": 3,
+					"name": "id2rem",
+					"description": "Bank account ID to removing.",
+					"required": true
+					
+				}
+			]
+		},
+		{
+			"name": "bank-addtimer",
+			"description": "Add timer to bank account",
+			"options": [
+				{
+					"type": 3,
+					"name": "id1",
+					"description": "Bank account ID",
+					"required": true
+				},
+				{
+					"type": 3,
+					"name": "action",
+					"description": "Action to execute",
+					"choices": [
+						{
+							"name": "Suspend bank account",
+							"value": "suspend"
+						},
+						{
+							"name": "Warn owner of bank account",
+							"value": "warn"
+						},
+						{
+							"name": "Add to balance",
+							"value": "add2b"
+						},
+						{
+							"name": "Remove from balance",
+							"value": "remove4b"
+						},
+						{
+							"name": "Change status",
+							"value": "status"
+						},
+						{
+							"name": "Nothing",
+							"value": "nothing"
+						},
+						{
+							"name": "Set balance",
+							"value": "set2b"
+						}
+					],
+					"required": true
+				},
+				{
+					"type": 4,
+					"name": "value",
+					"description": "Value for changing balance",
+					"required": true
+				},
+				{
+					"type": 3,
+					"name": "id2",
+					"description": "Removed balance count will be moved to other bank account. But if id2 equals 0, it will not happen",
+					"required": true
+				},
+				{
+					"type": 3,
+					"name": "status",
+					"description": "Status",
+					"choices": [
+						{
+							"name": "Personal",
+							"value": "personal"
+						},
+						{
+							"name": "Professional",
+							"value": "professional"
+						},
+						{
+							"name": "Will not be changed",
+							"value": "no"
+						}
+					],
+					"required": true
+				},
+				{
+					"type": 3,
+					"name": "warn-message",
+					"description": "Message that will be sent to owner of bank account as a warning",
+					"required": true
+				},
+				{
+					"type": 10,
+					"name": "hours",
+					"description": "Time of timer",
+					"required": true
+				}
+			]
+		},
+		{
+			"name": "bank-deleteaccount",
+			"description": "Only owner can delete own bank account"
+		},
+		{
+			"name": "bank-migrateaccount",
+			"description": "Migrate your account to new format"
+		},
+		{
+			"name": "bank-linkawa",
+			"description": "Link account with another account",
+			"options": [
+				{
+					"type": 3,
+					"name": "id1",
+					"description": "Bank account ID",
+					"required": true
+				},
+				{
+					"type": 3,
+					"name": "id2",
+					"description": "Bank account ID",
+					"required": true
+				}
+			]
+		},
+		{
+			"name": "norches-info",
+			"description": "Norches info"
+		}
+	],
+	"xp": 8,
+	"print_token": false,
+	"print_appid": false,
+	"bank": {
+		"currency": "Мембрана фантома",
+		"version": "0.2"
+	}
+}

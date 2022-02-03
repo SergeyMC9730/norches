@@ -1,0 +1,1 @@
+node main.js TOKEN APP_ID
