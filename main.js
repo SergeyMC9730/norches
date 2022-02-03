@@ -6,6 +6,7 @@ var settings = JSON.parse(fs.readFileSync("settings.json").toString("utf8"));
 
 var token = process.argv[2];
 var clientid = process.argv[3];
+var libpaint = require("./libpaint/main")
 
 var uptime = [0, 0, 0];
 
@@ -21,6 +22,10 @@ var libbank = require("./bank")
 
 var sprivate = JSON.parse(fs.readFileSync("private.json").toString("utf8"));
 
+//Init libpaint
+if(libpaint.extended.isnan(libpaint.user.getuserpaintings("0"))){
+  libpaint.user.createuserdata("0");
+}
 
 
 var update_commands = () => {
@@ -82,6 +87,13 @@ client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
+var function0 = (arr = [0, 0, 0]) => {
+  var d = 0;
+  var res = 0;
+  while(d < arr.length) res += arr[d++];
+  return Math.round(res / arr.length);
+}
+
 client.on('interactionCreate', async interaction => {
   if (!interaction.isCommand()) return;
 
@@ -90,11 +102,48 @@ client.on('interactionCreate', async interaction => {
   }
 
   if (interaction.commandName === "bank-info") {
+    //create image
+    var ncoinh = libpaint.paint.createblankimg("Norches Bot", `NCoin history for ${new Date().toString()}`, "0");
+    //write data
+    read_private();
+    var lasth = sprivate.bank.ncoin.history.slice(-8);
+    var p = [];
+    var j = 0;
+    var copy = [];
+    var temp = ncoinh.image.bytearray;
+    while(j < 8){
+      copy[j] = (lasth[j] < 0) ? lasth[j] - lasth[j] - lasth[j] : lasth[j];
+      j++;
+    }
+    console.log(sprivate.bank.ncoin.history.slice(-8))
+    var s = function0(copy) * 2;
+    j = 0;
+    var render = "";
+    while(j < 8){
+      //copy[j] -= s;
+      console.log(copy[j] < 0, copy[j] > 7);
+      if(copy[j] < 0) copy[j] = 0;
+      if(copy[j] > 7) copy[j] %= 8;
+
+      p.push([copy[j], j]);
+      j++;
+    }
+    console.log(p)
+    j = 0;
+    while(j < 8){
+      
+      temp = libpaint.paint.pixels.draw(p[j], "30", temp);
+      j++;
+    }
+    render = libpaint.paint.renderpaint(libpaint.extended.mergebytes(temp).bytestring, [0, 0], true, true);
+    console.log(sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length] > sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length - 1], sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length], sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length - 1])
     await interaction.reply({ embeds: [make_bank_message(`
     **Валюта:** <:membrane:931940593179979806> ${settings.bank.currency}
-    **Цена NCoin:** \`${sprivate.bank.ncoin.value}\` ⬇️
+    **Цена NCoin:** \`${sprivate.bank.ncoin.value}\` ${(sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length - 1] > sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length - 2]) ? "🔼" : "⬇️"}
     **Игроков в банке:** \`${sprivate.bank.players.length}\`
     **Последняя версия структуры аккаунтов:** **\`${settings.bank.version}\`**
+    **История NCoin:**
+    ${render}
     `)]});
   }
 

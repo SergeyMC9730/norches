@@ -1,6 +1,5 @@
 node_modules
 private.json
-*.sh
-
+start.sh
 input_result.txt
 input_result2.txt
