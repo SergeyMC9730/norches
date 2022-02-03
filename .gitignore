@@ -1,4 +1,6 @@
-start.sh
 node_modules
 private.json
-runsystemctl.sh
+*.sh
+
+input_result.txt
+input_result2.txt
