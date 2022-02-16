@@ -3,3 +3,6 @@ private.json
 start.sh
 input_result.txt
 input_result2.txt
+libpaint/savefiles/*.json
+libpaint/savefiles/*.pntng
+logs.log

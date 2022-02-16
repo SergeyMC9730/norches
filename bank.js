@@ -45,10 +45,6 @@ var remove_bank_account = (id = "") => {
     save_private();
     return 0;
 }
-//personal -> professional = working
-//personal -> personal = working
-//professional -> personal = working
-//professional -> professional = 
 var check_access = (id = "", type = 0, id2 = "", uid = "") => {
     console.log(get_bank_account(uid, 1));
     var res = -1;
@@ -74,9 +70,26 @@ var check_access = (id = "", type = 0, id2 = "", uid = "") => {
     }
     return res;
 }
+var check_linked = (id = "", links = ["", "", ""]) => {
+    var res = {is_valid: 0, counter: 0};
+    links.forEach((l) => {
+        if(l.bid === id && links[0] != id) res.is_valid = 1;
+        res.counter++;
+    })
+    return res;
+}
+var count_linked = (links = ["", ""]) => {
+    var res = 0;
+    links.forEach((l) => {
+        if(l != null) res++;
+    });
+    return res;
+}
 
 module.exports = {
     get_bank_account: get_bank_account,
     remove_bank_account: remove_bank_account,
-    check_access: check_access
+    check_access: check_access,
+    check_linked: check_linked,
+    count_linked: count_linked
 }
