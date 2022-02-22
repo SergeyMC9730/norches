@@ -1,4 +1,0 @@
-[submodule "libpaint"]
-	path = libpaint
-	url = git@github.com:SergeyMC9730/libpaint.git
-	branch = main
