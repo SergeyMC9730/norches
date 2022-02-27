@@ -29,18 +29,20 @@ var isOpen = false;
 var serverSocketConnection;
 try {
   serverSocketConnection = new ws(`${sprivate.server.WebSocketIP}:${sprivate.server.WebSocketPort}`);
-  serverSocketConnection.on('open', (ws) => {
-    isOpen = true;
-    console.log("Successfully connected to the server");
-  })
-  serverSocketConnection.on('error', (ws, err) => {
-    isOpen = false;
-    console.log("Unable to connect to the server");
-  })
-  serverSocketConnection.on("close", (ws, code, reason) => {
-    isOpen = false;
-    console.log("Server connection closed");
-  })
+  if(typeof serverSocketConnection != "undefined"){
+    serverSocketConnection.on('open', (ws) => {
+      isOpen = true;
+      console.log("Successfully connected to the server");
+    })
+    serverSocketConnection.on('error', (ws, err) => {
+      isOpen = false;
+      console.log("Unable to connect to the server");
+    })
+    serverSocketConnection.on("close", (ws, code, reason) => {
+      isOpen = false;
+      console.log("Server connection closed");
+    })
+  }
 } catch {
   console.log("Unable to connect to the server")
 }
