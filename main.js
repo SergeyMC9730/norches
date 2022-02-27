@@ -37,12 +37,12 @@ try {
     serverSocketConnection.on('error', (ws, err) => {
       isOpen = false;
       console.log("Unable to connect to the server");
-      throw new Error("Unknown server");
+      return;
     })
     serverSocketConnection.on("close", (ws, code, reason) => {
       isOpen = false;
       console.log("Server connection closed");
-      throw new Error("Server connection closed");
+      return;
     })
   }
 } catch (e) {
