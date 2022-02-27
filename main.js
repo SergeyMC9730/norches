@@ -189,6 +189,15 @@ client.on('interactionCreate', async interaction => {
 
   if (interaction.commandName === "bank-info") {
     //create image
+    if(sprivate.bank.ncoin.history.length < 8){
+      await interaction.reply({ embeds: [make_bank_message(`
+      **Валюта:** <:membrane:931940593179979806> ${settings.bank.currency}
+      **Цена NCoin:** \`${sprivate.bank.ncoin.value}\` ${(sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length - 1] > sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length - 2]) ? "🔼" : "⬇️"}
+      **Игроков в банке:** \`${sprivate.bank.players.length}\`
+      **Последняя версия структуры аккаунтов:** **\`${settings.bank.version}\`**
+      **Курс NCoin не доступен из-за нехватки информации банка!**
+      `)]});
+    }
     var ncoinh = libpaint.paint.createblankimg("Norches Bot", `NCoin history for ${new Date().toString()}`, "0");
     //write data
     read_private();
@@ -206,8 +215,6 @@ client.on('interactionCreate', async interaction => {
     j = 0;
     var render = "";
     while(j < 8){
-      //copy[j] -= s;
-      console.log(copy[j] < 0, copy[j] > 7);
       if(copy[j] < 0) copy[j] = 0;
       if(copy[j] > 7) copy[j] %= 8;
 
@@ -221,7 +228,6 @@ client.on('interactionCreate', async interaction => {
       j++;
     }
     render = libpaint.paint.renderpaint(libpaint.extended.mergebytes(temp).bytestring, [0, 0], true, true);
-    console.log(sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length] > sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length - 1], sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length], sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length - 1])
     await interaction.reply({ embeds: [make_bank_message(`
     **Валюта:** <:membrane:931940593179979806> ${settings.bank.currency}
     **Цена NCoin:** \`${sprivate.bank.ncoin.value}\` ${(sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length - 1] > sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length - 2]) ? "🔼" : "⬇️"}
