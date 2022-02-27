@@ -197,45 +197,46 @@ client.on('interactionCreate', async interaction => {
       **Последняя версия структуры аккаунтов:** **\`${settings.bank.version}\`**
       **Курс NCoin не доступен из-за нехватки информации банка!**
       `)]});
-    }
-    var ncoinh = libpaint.paint.createblankimg("Norches Bot", `NCoin history for ${new Date().toString()}`, "0");
-    //write data
-    read_private();
-    var lasth = sprivate.bank.ncoin.history.slice(-8);
-    var p = [];
-    var j = 0;
-    var copy = [];
-    var temp = ncoinh.image.bytearray;
-    while(j < 8){
-      copy[j] = (lasth[j] < 0) ? lasth[j] - lasth[j] - lasth[j] : lasth[j];
-      j++;
-    }
-    console.log(sprivate.bank.ncoin.history.slice(-8))
-    var s = function0(copy) * 2;
-    j = 0;
-    var render = "";
-    while(j < 8){
-      if(copy[j] < 0) copy[j] = 0;
-      if(copy[j] > 7) copy[j] %= 8;
+    } else {
+      var ncoinh = libpaint.paint.createblankimg("Norches Bot", `NCoin history for ${new Date().toString()}`, "0");
+      //write data
+      read_private();
+      var lasth = sprivate.bank.ncoin.history.slice(-8);
+      var p = [];
+      var j = 0;
+      var copy = [];
+      var temp = ncoinh.image.bytearray;
+      while(j < 8){
+        copy[j] = (lasth[j] < 0) ? lasth[j] - lasth[j] - lasth[j] : lasth[j];
+        j++;
+      }
+      console.log(sprivate.bank.ncoin.history.slice(-8))
+      var s = function0(copy) * 2;
+      j = 0;
+      var render = "";
+      while(j < 8){
+        if(copy[j] < 0) copy[j] = 0;
+        if(copy[j] > 7) copy[j] %= 8;
 
-      p.push([copy[j], j]);
-      j++;
+        p.push([copy[j], j]);
+        j++;
+      }
+      console.log(p)
+      j = 0;
+      while(j < 8){
+        temp = libpaint.paint.pixels.draw(p[j], "30", temp);
+        j++;
+      }
+      render = libpaint.paint.renderpaint(libpaint.extended.mergebytes(temp).bytestring, [0, 0], true, true);
+      await interaction.reply({ embeds: [make_bank_message(`
+      **Валюта:** <:membrane:931940593179979806> ${settings.bank.currency}
+      **Цена NCoin:** \`${sprivate.bank.ncoin.value}\` ${(sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length - 1] > sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length - 2]) ? "🔼" : "⬇️"}
+      **Игроков в банке:** \`${sprivate.bank.players.length}\`
+      **Последняя версия структуры аккаунтов:** **\`${settings.bank.version}\`**
+      **Курс NCoin:**
+      ${render}
+      `)]});
     }
-    console.log(p)
-    j = 0;
-    while(j < 8){
-      temp = libpaint.paint.pixels.draw(p[j], "30", temp);
-      j++;
-    }
-    render = libpaint.paint.renderpaint(libpaint.extended.mergebytes(temp).bytestring, [0, 0], true, true);
-    await interaction.reply({ embeds: [make_bank_message(`
-    **Валюта:** <:membrane:931940593179979806> ${settings.bank.currency}
-    **Цена NCoin:** \`${sprivate.bank.ncoin.value}\` ${(sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length - 1] > sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length - 2]) ? "🔼" : "⬇️"}
-    **Игроков в банке:** \`${sprivate.bank.players.length}\`
-    **Последняя версия структуры аккаунтов:** **\`${settings.bank.version}\`**
-    **Курс NCoin:**
-    ${render}
-    `)]});
   }
 
   if (interaction.commandName === "gen") {
