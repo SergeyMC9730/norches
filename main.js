@@ -28,16 +28,21 @@ var sprivate = JSON.parse(fs.readFileSync("private.json").toString("utf8"));
 var serverSocketConnection = new ws(`${sprivate.server.WebSocketIP}:${sprivate.server.WebSocketPort}`);
 var isOpen = false;
 
-serverSocketConnection.on('open', () => {
+serverSocketConnection.on('open', (ws) => {
   isOpen = true;
   console.log("Successfully connected to the server");
 })
+serverSocketConnection.on('error', (ws, err) => {
+  isOpen = false;
+  console.log("Unable to connect to the server");
+})
+serverSocketConnection.on("close", (ws, code, reason) => {
+  isOpen = false;
+  console.log("Server connection closed");
+})
 
 //Init libpaint
-if(libpaint.extended.isnan(libpaint.user.getuserpaintings("0"))){
-  libpaint.user.createuserdata("0");
-}
-
+if(libpaint.extended.isnan(libpaint.user.getuserpaintings("0"))) libpaint.user.createuserdata("0");
 
 var update_commands = () => {
   sprivate.guilds.forEach(function (g) {
