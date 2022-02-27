@@ -37,14 +37,16 @@ try {
     serverSocketConnection.on('error', (ws, err) => {
       isOpen = false;
       console.log("Unable to connect to the server");
+      throw new Error("Unknown server");
     })
     serverSocketConnection.on("close", (ws, code, reason) => {
       isOpen = false;
       console.log("Server connection closed");
+      throw new Error("Server connection closed");
     })
   }
-} catch {
-  console.log("Unable to connect to the server")
+} catch (e) {
+  console.log("Unable to connect to the server: %s", e);
 }
 
 //Init libpaint
