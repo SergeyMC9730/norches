@@ -261,12 +261,13 @@ client.on('interactionCreate', async interaction => {
       //1 - mc nickname
       //2 - account name
       //3 - balance
-      //4 - linked discord ids (only supports Professional account)
+      //4 - linked bank and discord ids (only supports Professional account)
       //5 - placeholder
       //6 - is access denied?
       //7 - account type
       //8 - account version
-      sprivate.bank.players.push([user.id, nick, name, 0, [`${id}`], null, true, "personal", settings.bank.version]);
+      //9 - messages
+      sprivate.bank.players.push([user.id, nick, name, 0, [{bid: `${id}`, did: user.id}], null, false, "personal", settings.bank.version, []]);
       save_private();
       if(interaction.user.id == user.id){
         await interaction.reply({embeds: [make_bank_message(`**Ваш аккаунт был успешно создан!**\nID аккаунта: **\`${id}\`**`)]}); 
