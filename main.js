@@ -25,21 +25,25 @@ if (!fs.existsSync("private.json")) {
 var libbank = require("./bank")
 
 var sprivate = JSON.parse(fs.readFileSync("private.json").toString("utf8"));
-var serverSocketConnection = new ws(`${sprivate.server.WebSocketIP}:${sprivate.server.WebSocketPort}`);
 var isOpen = false;
-
-serverSocketConnection.on('open', (ws) => {
-  isOpen = true;
-  console.log("Successfully connected to the server");
-})
-serverSocketConnection.on('error', (ws, err) => {
-  isOpen = false;
-  console.log("Unable to connect to the server");
-})
-serverSocketConnection.on("close", (ws, code, reason) => {
-  isOpen = false;
-  console.log("Server connection closed");
-})
+var serverSocketConnection;
+try {
+  serverSocketConnection = new ws(`${sprivate.server.WebSocketIP}:${sprivate.server.WebSocketPort}`);
+  serverSocketConnection.on('open', (ws) => {
+    isOpen = true;
+    console.log("Successfully connected to the server");
+  })
+  serverSocketConnection.on('error', (ws, err) => {
+    isOpen = false;
+    console.log("Unable to connect to the server");
+  })
+  serverSocketConnection.on("close", (ws, code, reason) => {
+    isOpen = false;
+    console.log("Server connection closed");
+  })
+} catch {
+  console.log("Unable to connect to the server")
+}
 
 //Init libpaint
 if(libpaint.extended.isnan(libpaint.user.getuserpaintings("0"))) libpaint.user.createuserdata("0");
@@ -461,10 +465,12 @@ client.on('interactionCreate', async interaction => {
       toPlayer: player,
       action: action
     }
-
-    serverSocketConnection.send(JSON.stringify(toSend));
-
-    await interaction.reply({embeds: [make_bank_message(JSON.stringify(toSend))]});
+    if(isOpen){
+      serverSocketConnection.send(JSON.stringify(toSend));
+      await interaction.reply({embeds: [make_bank_message(JSON.stringify(toSend))]});
+    } else {
+      await interaction.reply({embeds: [make_bank_message("Извините!\nНе удалось подключиться к серверу!")]});
+    }
   }
   if (interaction.commandName === "bank-deleteaccount") {
     if(libbank.remove_bank_account(interaction.user.id) == -1){
