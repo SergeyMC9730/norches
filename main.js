@@ -27,6 +27,8 @@ var libbank = require("./bank")
 var sprivate = JSON.parse(fs.readFileSync("private.json").toString("utf8"));
 var isOpen = false;
 var serverSocketConnection;
+var latestSocketData = "";
+var latestRequest = "";
 try {
   serverSocketConnection = new ws(`${sprivate.server.WebSocketIP}:${sprivate.server.WebSocketPort}`);
   if(typeof serverSocketConnection != "undefined"){
@@ -43,6 +45,13 @@ try {
       isOpen = false;
       console.log("Server connection closed");
       return;
+    })
+    serverSocketConnection.on("message", (data, isBinary) => {
+      if(latestRequest == "tps"){
+        latestSocketData = parseFloat(data.toString()).toPrecision(3)  
+      } else {
+        latestSocketData = data.toString();
+      }
     })
   }
 } catch (e) {
@@ -170,17 +179,6 @@ setInterval(() => {
     }
   })
 }, 60 * 1000) //timers handler
-
-var latestSocketData = "";
-var latestRequest = "";
-
-serverSocketConnection.on("message", (data, isBinary) => {
-  if(latestRequest == "tps"){
-    latestSocketData = parseFloat(data.toString()).toPrecision(3)  
-  } else {
-    latestSocketData = data.toString();
-  }
-})
 
 client.on('interactionCreate', async interaction => {
   if (!interaction.isCommand()) return;
