@@ -120,7 +120,7 @@
 			]
 		},
 		{
-			"name": "bank-removetimer",
+			"name": "bank-unschedule",
 			"description": "Remove timer from bank account",
 			"options": [
 				{
@@ -132,7 +132,7 @@
 			]
 		},
 		{
-			"name": "bank-addtimer",
+			"name": "bank-schedule",
 			"description": "Add timer to bank account",
 			"options": [
 				{

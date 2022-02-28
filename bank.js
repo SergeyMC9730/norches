@@ -46,7 +46,6 @@ var remove_bank_account = (id = "") => {
     return 0;
 }
 var check_access = (id = "", type = 0, id2 = "", uid = "") => {
-    console.log(get_bank_account(uid, 1));
     var res = -1;
     if(get_bank_account(id, type).is_valid == true && get_bank_account(id2, type).is_valid == true && get_bank_account(uid, 0).is_valid == true){
         if ((get_bank_account(id, type).player_object[7] == "personal" && get_bank_account(id2, type).player_object[7] == "personal") || (get_bank_account(id, type).player_object[7] == "personal" && get_bank_account(id2, type).player_object[7] == "professional")){

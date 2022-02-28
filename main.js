@@ -132,13 +132,13 @@ var function0 = (arr = [0, 0, 0]) => {
 //bank-createaccount - Bank
 //bank-changebalance (Remove) - Player
 //bank-changebalance (Add, Set) - Bank
-//bank-addtimer - Bank, Police
+//bank-schedule - Bank, Police
 //hello - Player
 //gen - Player
 //xp - Player
 //bank-info - Player
 //bank-getaccount - Player
-//bank-removetimer - Bank, Police
+//bank-unschedule - Bank, Police
 //bank-deleteaccount - Player
 //bank-migrateaccount (Self) - Player
 //bank-migrateaccount (Other) - Bank
@@ -210,8 +210,6 @@ client.on('interactionCreate', async interaction => {
         copy[j] = (lasth[j] < 0) ? lasth[j] - lasth[j] - lasth[j] : lasth[j];
         j++;
       }
-      console.log(sprivate.bank.ncoin.history.slice(-8))
-      var s = function0(copy) * 2;
       j = 0;
       var render = "";
       while(j < 8){
@@ -221,7 +219,6 @@ client.on('interactionCreate', async interaction => {
         p.push([copy[j], j]);
         j++;
       }
-      console.log(p)
       j = 0;
       while(j < 8){
         temp = libpaint.paint.pixels.draw(p[j], "30", temp);
@@ -253,7 +250,6 @@ client.on('interactionCreate', async interaction => {
     var nick = interaction.options.getString('nick');
     var name = interaction.options.getString('name');
     var id = Math.round(Math.random() * 8192);
-    console.log(libbank.get_bank_account(user.id).player_object);
     if(libbank.get_bank_account(user.id).is_valid == false || libbank.get_bank_account(user.id).player_object[6] == false) {
 
 
@@ -424,7 +420,7 @@ client.on('interactionCreate', async interaction => {
       await interaction.reply({embeds: [make_bank_message(`Извините!\nАккаунт **не существует!**`)]});
     }
   }
-  if(interaction.commandName === "bank-deletelink"){
+  if(interaction.commandName === "bank-unlink"){
     var user = interaction.options.getUser("user", true);
     if(libbank.get_bank_account(user.id, 0).is_valid && libbank.get_bank_account(interaction.user.id, 0).is_valid){
       read_private();
