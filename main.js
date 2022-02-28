@@ -218,8 +218,8 @@ client.on('interactionCreate', async interaction => {
       var render = "";
       while(j < 8) copy[j++] -= tmp2;
       while(j < 8){
-        if(copy[j] >= 7) copy[j] = 7;
-        if(copy[j] <= 0) copy[j] = 0;
+        if(copy[j] > 7) copy[j] = 7;
+        if(copy[j] < 0) copy[j] = 0;
 
         p.push([copy[j], j]);
         j++;
