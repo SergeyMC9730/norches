@@ -189,10 +189,15 @@ client.on('interactionCreate', async interaction => {
 
   if (interaction.commandName === "bank-info") {
     //create image
+    var icon = "";
+    if(sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length - 1] == sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length - 2]) icon = "⏺️"
+    else {
+      icon = (sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length - 1] > sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length - 2]) ? "🔼" : "⬇️";
+    }
     if(sprivate.bank.ncoin.history.length < 8){
       await interaction.reply({ embeds: [make_bank_message(`
       **Валюта:** <:membrane:931940593179979806> ${settings.bank.currency}
-      **Цена NCoin:** \`${sprivate.bank.ncoin.value}\` ${(sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length - 1] > sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length - 2]) ? "🔼" : "⬇️"}
+      **Цена NCoin:** \`${sprivate.bank.ncoin.value}\` ${icon};
       **Игроков в банке:** \`${sprivate.bank.players.length}\`
       **Последняя версия структуры аккаунтов:** **\`${settings.bank.version}\`**
       **Курс NCoin не доступен из-за нехватки информации банка!**
@@ -233,7 +238,7 @@ client.on('interactionCreate', async interaction => {
       render = libpaint.paint.renderpaint(libpaint.extended.mergebytes(temp).bytestring, [0, 0], true, true);
       await interaction.reply({ embeds: [make_bank_message(`
       **Валюта:** <:membrane:931940593179979806> ${settings.bank.currency}
-      **Цена NCoin:** \`${sprivate.bank.ncoin.value}\` ${(sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length - 1] > sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length - 2]) ? "🔼" : "⬇️"}
+      **Цена NCoin:** \`${sprivate.bank.ncoin.value}\` ${icon}
       **Игроков в банке:** \`${sprivate.bank.players.length}\`
       **Последняя версия структуры аккаунтов:** **\`${settings.bank.version}\`**
       **Курс NCoin:**
