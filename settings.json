@@ -6,7 +6,7 @@
 		},
 		{
 			"name": "gen",
-			"description": "generate message using Wikipedia pages"
+			"description": "generate message using old 10k FW message dump"
 		},
 		{
 			"name": "xp",
@@ -121,7 +121,7 @@
 		},
 		{
 			"name": "bank-unschedule",
-			"description": "Remove timer from bank account",
+			"description": "Unschedule action from bank account",
 			"options": [
 				{
 					"type": 4,
@@ -133,7 +133,7 @@
 		},
 		{
 			"name": "bank-schedule",
-			"description": "Add timer to bank account",
+			"description": "Schedule action for bank account",
 			"options": [
 				{
 					"type": 6,

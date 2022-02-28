@@ -199,9 +199,13 @@ client.on('interactionCreate', async interaction => {
       `)]});
     } else {
       var ncoinh = libpaint.paint.createblankimg("Norches Bot", `NCoin history for ${new Date().toString()}`, "0");
+      
       //write data
       read_private();
       var lasth = sprivate.bank.ncoin.history.slice(-8);
+      //get highest
+      var tmp2 = lasth;
+      tmp2 = tmp2.sort().slice(-1) - 7;
       var p = [];
       var j = 0;
       var copy = [];
@@ -212,9 +216,10 @@ client.on('interactionCreate', async interaction => {
       }
       j = 0;
       var render = "";
+      while(j < 8) copy[j++] -= tmp2;
       while(j < 8){
-        if(copy[j] < 0) copy[j] = 0;
-        if(copy[j] > 7) copy[j] %= 8;
+        if(copy[j] >= 7) copy[j] = 7;
+        if(copy[j] <= 0) copy[j] = 0;
 
         p.push([copy[j], j]);
         j++;
