@@ -389,7 +389,7 @@ client.on('interactionCreate', async interaction => {
               sprivate.bank.ncoin.history.push(sprivate.bank.ncoin.value);
               await interaction.reply({embeds: [make_bank_message(`**Успешно вычислены** ${value} <:membrane:931940593179979806> ${settings.bank.currency} аккаунту **\`${id1}\`** и добавлены аккаунту **\`${id2}\`**!`)]});
             } else {
-              interaction.reply({embeds: [make_bank_message(`Извините!\nУ Вас **нет доступа к запрошенному аккаунту!**`)]})
+              await interaction.reply({embeds: [make_bank_message(`Извините!\nУ Вас **нет доступа к запрошенному аккаунту!**`)]});
             }
           }
         }
@@ -397,12 +397,35 @@ client.on('interactionCreate', async interaction => {
     }
     save_private();
   }
-  if (interaction.commandName === "bank-addtimer") {
-
-    await interaction.reply("WIP");
+  if (interaction.commandName === "bank-schedule") {
+    var user = interaction.options.getUser("user", true);
+    var action = interaction.options.getString("action", true);
+    var value = interaction.options.getInteger("value", true);
+    var id2 = interaction.options.getString("id2", true);
+    var status = interaction.options.getString("status", true);
+    var warn_message = interaction.options.getString("warn-message", true);
+    var minutes = interaction.options.getInteger("minutes", true);
+    if(user.id == interaction.user.id){
+      return await interaction.reply({embeds: [make_bank_message(`Извините!\nВы не можете запланировать действие на **свой же аккаунт!**`)]});
+    }
+    read_private();
+    if(!libbank.get_bank_account(user.id, 0).is_valid) {
+      return await interaction.reply({embeds: [make_bank_message(`Извините!\nЗапрошенный аккаунт **не существует!**`)]});
+    }
+    //structure of timer
+    //{start_time: unix_time, end_time: unix_time, action: string, id: number, warn_message: string, arguments: []}
+    
+    await interaction.reply("Ещё не реализовано, приходите позже.");
+  }
+  if (interaction.commandName === "bank-unschedule") {
+    var id = interaction.options.getInteger("id", true);
+    await interaction.reply("Ещё не реализовано, приходите позже.");
   }
   if (interaction.commandName === "bank-link"){
     var user = interaction.options.getUser("user", true);
+    if(user.id == interaction.user.id) {
+      return await interaction.reply({embeds: [make_bank_message(`Извините!\nВы не можете добавить **самого себя!**`)]});
+    }
     if(libbank.get_bank_account(user.id, 0).is_valid && libbank.get_bank_account(interaction.user.id, 0).is_valid){
       read_private();
       if(libbank.get_bank_account(interaction.user.id, 0).player_object[7] == "professional"){

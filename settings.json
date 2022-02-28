@@ -210,7 +210,7 @@
 				{
 					"type": 4,
 					"name": "minutes",
-					"description": "Time",
+					"description": "Time of the scheduled task",
 					"required": true
 				}
 			]
