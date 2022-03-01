@@ -348,16 +348,16 @@ client.on('interactionCreate', async interaction => {
     if(libbank.get_bank_account(user.id).is_valid == true && libbank.get_bank_account(user.id).player_object[6] == true){
       var b = libbank.get_bank_account(user.id);
       interaction.reply({embeds: [make_bank_message(`
-        ID акаунта: **\`${b.player_object[5] == null ? b.player_object[4][0].bid : b.player_object[5]}\`**
-        Назва облікового запису: **\`${b.player_object[2]}\`**
-        Тип облікового запису: **${(b.player_object[7] === "personal") ? "Персональный" : "Профессиональный"}**
-        Нікнейм власника: **\`${b.player_object[1]}\`**
-        Власник: **<@${b.player_object[0]}>**
+        ID аккаунта: **\`${b.player_object[5] == null ? b.player_object[4][0].bid : b.player_object[5]}\`**
+        Название аккаунта: **\`${b.player_object[2]}\`**
+        Тип аккаунта: **${(b.player_object[7] === "personal") ? "Персональный" : "Профессиональный"}**
+        Никнейм владельца: **\`${b.player_object[1]}\`**
+        Владелец: **<@${b.player_object[0]}>**
         Баланс: **${b.player_object[3]}** <:membrane:931940593179979806> ${settings.bank.currency}
-        Сполучених облікових записів: **${libbank.count_linked(b.player_object[4]) - 1}**
-        Оповіщення: **${(b.player_object[9] === undefined) ? "Не мигрирован" : b.player_object[9].toString()}**
+        Соединённых аккаунтов: **${libbank.count_linked(b.player_object[4]) - 1}**
+        Оповещения: **${(b.player_object[9] === undefined) ? "Не мигрирован" : b.player_object[9].toString()}**
 
-        Версія структури облікового запису: **\`${(b.player_object[8] === undefined || b.player_object[8] === null) ? "Не мигрирован" : b.player_object[8]}\`**
+        Версия структуры аккаунта: **\`${(b.player_object[8] === undefined || b.player_object[8] === null) ? "Не мигрирован" : b.player_object[8]}\`**
       `)]});
     } else {
       interaction.reply({embeds: [make_bank_message(`Извините!\nЗапрошенный аккаунт **не существует!**`)]})

@@ -323,7 +323,7 @@
 	"print_appid": false,
 	"scheduler": true,
 	"bank": {
-		"currency": "Перетинка фантома",
+		"currency": "Мембрана фантома",
 		"version": "0.3"
 	}
 }
