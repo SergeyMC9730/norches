@@ -147,14 +147,15 @@ var function0 = (arr = [0, 0, 0]) => {
 //norches-info - Player
 
 setInterval(() => {
+  if(!settings.scheduler) return;
   read_private();
+  var i = 0;
   sprivate.bank.timers.forEach((t) => {
     //structure of timer
     //{start_time: unix_time, end_time: unix_time, action: string, id: number, warn_message: string, arguments: []}
     if(t != null){
       if(Date.now() > t.end_time || Date.now() == t.end_time){
         //handle
-
         switch(t.action){
           case "delete": {
             libbank.remove_bank_account(t.arguments[0]);
@@ -173,12 +174,13 @@ setInterval(() => {
           }
         }        
 
-        sprivate.bank.timers[t.id] = null;
+        sprivate.bank.timers[i] = null;
         save_private();
       }
     }
+    i++;
   })
-}, 60 * 1000) //timers handler
+}, 60 * 1000) //scheduler
 
 client.on('interactionCreate', async interaction => {
   if (!interaction.isCommand()) return;
@@ -423,14 +425,31 @@ client.on('interactionCreate', async interaction => {
     if(!libbank.get_bank_account(user.id, 0).is_valid) {
       return await interaction.reply({embeds: [make_bank_message(`Извините!\nЗапрошенный аккаунт **не существует!**`)]});
     }
+    //{ guilds: [], bank: { ncoin: { value: 0, history: [] }, players: [], timers: [] }, xp: { users: [], data: [] }, server: {WebSocketIP: "", WebSocketPort: 0} }
+    var t = Date.now();
+    var sid = sprivate.bank.timers.push({
+      start_time: t,
+      end_time: t += (minutes * 60 * 1000),
+      action: action,
+      id: 0, //unused
+      warn_message: warn_message,
+      arguments: [user.id]
+    });
     //structure of timer
     //{start_time: unix_time, end_time: unix_time, action: string, id: number, warn_message: string, arguments: []}
-    
-    await interaction.reply("Ещё не реализовано, приходите позже.");
+    save_private();
+    await interaction.reply({embeds: [make_bank_message(`Извините!\n*Не "Извините!"*, ID запланированной задачи: **\`${sid}\`**`)]});
   }
   if (interaction.commandName === "bank-unschedule") {
     var id = interaction.options.getInteger("id", true);
-    await interaction.reply("Ещё не реализовано, приходите позже.");
+    read_private();
+    if(typeof sprivate.bank.timers[id - 1] == "undefined" || sprivate.bank.timers[id - 1] == null){
+      await interaction.reply({embeds: [make_bank_message(`Извините!\nДанная задача **не существует**!`)]});
+    } else {
+      sprivate.bank.timers[id - 1] = null;
+      save_private();
+      await interaction.reply({embeds: [make_bank_message(`**Успешно удалена запланированная задача**`)]});
+    }
   }
   if (interaction.commandName === "bank-link"){
     var user = interaction.options.getUser("user", true);

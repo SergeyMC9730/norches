@@ -6,7 +6,7 @@
 		},
 		{
 			"name": "gen",
-			"description": "generate message using old 10k FW message dump"
+			"description": "generate message using old 10k FWorld message dump"
 		},
 		{
 			"name": "xp",
@@ -321,6 +321,7 @@
 	"xp": 8,
 	"print_token": false,
 	"print_appid": false,
+	"scheduler": true,
 	"bank": {
 		"currency": "Мембрана фантома",
 		"version": "0.3"
