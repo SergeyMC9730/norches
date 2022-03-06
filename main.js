@@ -31,6 +31,16 @@ var latestSocketData = "";
 var latestRequest = "";
 
 var kazna = 3046;
+var botowner;
+var roles = {
+  player: "927918475878498364",
+  bank: {
+    base: "927917784732684328",
+    main: "927917635113484328"
+  },
+  police: "950039874180890644",
+  bot_admin: botowner
+}
 
 try {
   serverSocketConnection = new ws(`${sprivate.server.WebSocketIP}:${sprivate.server.WebSocketPort}`);
@@ -123,6 +133,7 @@ setInterval(() => {
 
 client.on('ready', () => {
   is_ready = true;
+  botowner = client.application.owner.id;
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
@@ -139,18 +150,18 @@ var function0 = (arr = [0, 0, 0]) => {
 //bank-changebalance (Remove) - Player
 //bank-changebalance (Add, Set) - Bank
 //bank-schedule - Bank, Police
-//hello - Player
-//gen - Player
-//xp - Player
-//bank-info - Player
-//bank-getaccount - Player
+//gen - Everyone
+//xp - Everyone
+//bank-info - Everyone
+//bank-getaccount - Everyone
 //bank-unschedule - Bank, Police
 //bank-deleteaccount - Player
 //bank-convert (Self) - Player
 //bank-convert (Other player) - Bank
 //bank-link - Player with Professional status
 //bank-unlink - Player with Professional status
-//norches-info - Player
+//bank-reset - Bot Admin
+//norches-info - Everyone
 
 setInterval(() => {
   if(!settings.scheduler) return;
@@ -191,6 +202,8 @@ setInterval(() => {
 client.on('interactionCreate', async interaction => {
   if (!interaction.isCommand()) return;
 
+  var user_roles = interaction.member.roles.cache;
+
   if (interaction.commandName === "bank-info") {
     //create image
     var icon = "";
@@ -201,7 +214,7 @@ client.on('interactionCreate', async interaction => {
     if(sprivate.bank.ncoin.history.length < 8){
       await interaction.reply({ embeds: [make_bank_message(`
       **Валюта:** <:membrane:931940593179979806> ${settings.bank.currency}
-      **Цена NCoin:** \`${sprivate.bank.ncoin.value}\` ${icon};
+      **Цена NCoin:** \`${sprivate.bank.ncoin.value}\` ${icon}
       **Игроков в банке:** \`${sprivate.bank.players.length}\`
       **Последняя версия структуры аккаунтов:** **\`${settings.bank.version}\`**
       **Курс NCoin не доступен из-за нехватки информации о NCoin**
@@ -257,6 +270,10 @@ client.on('interactionCreate', async interaction => {
     await interaction.reply("https://www.youtube.com/watch?v=dQw4w9WgXcQ", {ephemeral: true});
   }
   if (interaction.commandName === "bank-createaccount") {
+    if(!user_roles.some(role => role.id === roles.bank.base) || !user_roles.some(role => role.id === roles.bank.main)){
+      return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
+    }
+
     var user = interaction.options.getUser('user');
     var nick = interaction.options.getString('nick');
     var name = interaction.options.getString('name');
@@ -287,6 +304,10 @@ client.on('interactionCreate', async interaction => {
     }
   }
   if (interaction.commandName === "bank-changestatus") {
+    if(!user_roles.some(role => role.id === roles.player)){
+      return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
+    }
+
     var id = interaction.options.getString('id');
     var status = interaction.options.getString('status');
     
@@ -294,19 +315,41 @@ client.on('interactionCreate', async interaction => {
       interaction.reply({embeds: [make_bank_message(`Извините!\nЗапрошенный аккаунт **не существует!**`)]});
     } else {
       read_private();
-      sprivate.bank.players[libbank.get_bank_account(id, 1).counter][7] = status;
-      var i = 0;
-      while(i < sprivate.bank.players[libbank.get_bank_account(id, 1).counter][4].length - 1){
-        sprivate.bank.players[libbank.get_bank_account(id, 1).counter][4][1 + i] = null;
-        i++;
+      if(status == "professional"){
+        if(sprivate.bank.players[libbank.get_bank_account(id, 1).counter][3] >= 24){
+          sprivate.bank.players[libbank.get_bank_account(id, 1).counter][7] = status;
+          sprivate.bank.players[libbank.get_bank_account(id, 1).counter][10] = Date();
+          save_private();
+          interaction.reply({embeds: [make_bank_message(`**Статус аккаунта был успешно изменён!**`)]});
+        } else {
+          return await interaction.reply({embeds: [make_bank_message(`Извините!\nДля изменения статуса аккаунта на Профессиональный на балансе **должно быть 24 ${settings.bank.currency}** <:membrane:931940593179979806>`)]});
+        }
+      } else {
+        sprivate.bank.players[libbank.get_bank_account(id, 1).counter][7] = status;
+        var i = 0;
+        while(i < sprivate.bank.players[libbank.get_bank_account(id, 1).counter][4].length - 1){
+          sprivate.bank.players[libbank.get_bank_account(id, 1).counter][4][1 + i] = null;
+          i++;
+        }
+        sprivate.bank.players[libbank.get_bank_account(id, 1).counter][10] = Date();
+        save_private();
+        interaction.reply({embeds: [make_bank_message(`**Статус аккаунта был успешно изменён!**`)]});
       }
-      save_private();
-      interaction.reply({embeds: [make_bank_message(`**Статус аккаунта был успешно изменён!**`)]});
     }
   }
   if(interaction.commandName === "bank-convert") {
     var user = interaction.options.getUser("user", false);
-    if(user == null) user = interaction.user;
+    if(user != null){
+      if(!user_roles.some(role => role.id === roles.bank.base) || !user_roles.some(role => role.id === roles.bank.main)){
+        return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
+      }
+    }
+    if(user == null) {
+      if(!user_roles.some(role => role.id === roles.player)){
+        return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
+      }
+      user = interaction.user;
+    }
 
     if(libbank.get_bank_account(user.id, 0).is_valid == false){
       interaction.reply({embeds: [make_bank_message(`Извините!\nЗапрошенный аккаунт **не существует!**`)]});
@@ -360,7 +403,7 @@ client.on('interactionCreate', async interaction => {
         Владелец: **<@${b.player_object[0]}>**
         Баланс: **${b.player_object[3]}** <:membrane:931940593179979806> ${settings.bank.currency}
         Соединённых аккаунтов: **${libbank.count_linked(b.player_object[4]) - 1}**
-        Оповещения: **${(b.player_object[9] === undefined) ? "Не конвертирован" : b.player_object[9].toString()}**
+        Оповещения: **${(b.player_object[9] === undefined) ? "Не конвертирован" : ((b.player_object[9].toString().length == 0) ? "Не имеются" : b.player_object[9].toString())}**
         Последняя активность: **\`${(b.player_object[10] === "undefined") ? "Не конвертирован" : b.player_object[10]}\`**
 
         Версия структуры аккаунта: **\`${(b.player_object[8] === undefined || b.player_object[8] === null) ? "Не конвертирован" : b.player_object[8]}\`**
@@ -370,6 +413,8 @@ client.on('interactionCreate', async interaction => {
     }
   }
   if (interaction.commandName === "bank-changebalance") {
+    
+
     read_private();
     var id1 = interaction.user.id;
     var id2 = interaction.options.getString("id2rem", true);
@@ -384,6 +429,9 @@ client.on('interactionCreate', async interaction => {
       id1 = libbank.get_bank_account(interaction.user.id, 0).player_object[4][0].bid;
       switch(action){
         case "set": {
+          if(!user_roles.some(role => role.id === roles.bank.base) || !user_roles.some(role => role.id === roles.bank.main)){
+            return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
+          }
           sprivate.bank.players[libbank.get_bank_account(id1, 1).counter][3] = value;
           sprivate.bank.ncoin.value += Math.floor(value % 64 / 5);
           sprivate.bank.ncoin.history.push(sprivate.bank.ncoin.value);
@@ -393,6 +441,11 @@ client.on('interactionCreate', async interaction => {
           break;
         }
         case "add": {
+          if(!user_roles.some(role => role.id === roles.bank.base) || !user_roles.some(role => role.id === roles.bank.main)){
+            return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
+          }
+
+
           sprivate.bank.players[libbank.get_bank_account(id1, 1).counter][3] += value;
           sprivate.bank.ncoin.value += Math.floor(value % 64 / 5);
           sprivate.bank.ncoin.history.push(sprivate.bank.ncoin.value);
@@ -402,6 +455,9 @@ client.on('interactionCreate', async interaction => {
           break;
         }
         case "remove": {
+          if(!user_roles.some(role => role.id === roles.player)){
+            return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
+          }
           //check access to id2 and id1
           if(libbank.get_bank_account(id2, 1).is_valid == false) {
             interaction.reply({embeds: [make_bank_message(`Извините!\nЗапрошенный аккаунт **не существует!**`)]})
@@ -425,6 +481,10 @@ client.on('interactionCreate', async interaction => {
     }
   }
   if (interaction.commandName === "bank-schedule") {
+    if(!user_roles.some(role => role.id === roles.police) || (!user_roles.some(role => role.id === roles.bank.base) || !user_roles.some(role => role.id === roles.bank.main))){
+      return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
+    }
+
     var user = interaction.options.getUser("user", true);
     var action = interaction.options.getString("action", true);
     var value = interaction.options.getInteger("value", true);
@@ -455,6 +515,10 @@ client.on('interactionCreate', async interaction => {
     await interaction.reply({embeds: [make_bank_message(`Извините!\n*Не "Извините!"*, ID запланированной задачи: **\`${sid}\`**`)]});
   }
   if (interaction.commandName === "bank-unschedule") {
+    if(!user_roles.some(role => role.id === roles.police) || (!user_roles.some(role => role.id === roles.bank.base) || !user_roles.some(role => role.id === roles.bank.main))){
+      return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
+    }
+
     var id = interaction.options.getInteger("id", true);
     read_private();
     if(typeof sprivate.bank.timers[id - 1] == "undefined" || sprivate.bank.timers[id - 1] == null){
@@ -466,6 +530,9 @@ client.on('interactionCreate', async interaction => {
     }
   }
   if (interaction.commandName === "bank-link"){
+    if(!user_roles.some(role => role.id === roles.player)){
+      return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
+    }
     var user = interaction.options.getUser("user", true);
     if(user.id == interaction.user.id) {
       return await interaction.reply({embeds: [make_bank_message(`Извините!\nВы не можете добавить **самого себя!**`)]});
@@ -489,6 +556,9 @@ client.on('interactionCreate', async interaction => {
     }
   }
   if(interaction.commandName === "bank-unlink"){
+    if(!user_roles.some(role => role.id === roles.player)){
+      return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
+    }
     var user = interaction.options.getUser("user", true);
     if(libbank.get_bank_account(user.id, 0).is_valid && libbank.get_bank_account(interaction.user.id, 0).is_valid){
       read_private();
@@ -526,6 +596,9 @@ client.on('interactionCreate', async interaction => {
     }
   }
   if (interaction.commandName === "bank-reset"){
+    if(!interaction.user.id == roles.bot_admin) {
+      return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
+    }
     read_private();
     sprivate.bank = JSON.parse("{\"bank\":{\"ncoin\":{\"value\":0,\"history\":[]},\"players\":[],\"timers\":[]}}").bank;
     save_private();
@@ -554,6 +627,10 @@ client.on('interactionCreate', async interaction => {
     }
   }
   if (interaction.commandName === "bank-deleteaccount") {
+    if(!user_roles.some(role => role.id === roles.player)){
+      return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
+    }
+
     var counter = libbank.remove_bank_account(interaction.user.id);
     if(counter == -1){
       await interaction.reply({embeds: [make_bank_message(`Извините!\nДанный аккаунт **не существует!**`)]});
