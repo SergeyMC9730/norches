@@ -340,6 +340,7 @@ client.on('interactionCreate', async interaction => {
           sprivate.bank.players[libbank.get_bank_account(user.id, 0).counter][10] = Date();
           save_private();
           interaction.reply({embeds: [make_bank_message(`**Аккаунт был успешно конвертирован на 0.4!**`)]});
+          break;
         }
         default: {
           sprivate.bank.players[libbank.get_bank_account(user.id, 0).counter][5] = `${sprivate.bank.players[libbank.get_bank_account(user.id, 0).counter][5]}`;
