@@ -1,10 +1,6 @@
 {
 	"commands": [
 		{
-			"name": "hello",
-			"description": "hello world"
-		},
-		{
 			"name": "gen",
 			"description": "generate message using old 10k FWorld message dump"
 		},
@@ -218,6 +214,10 @@
 		{
 			"name": "bank-deleteaccount",
 			"description": "Only owner can delete own account"
+		},
+		{
+			"name": "bank-reset",
+			"description": "Reset bank database"
 		},
 		{
 			"name": "bank-convert",

@@ -191,10 +191,6 @@ setInterval(() => {
 client.on('interactionCreate', async interaction => {
   if (!interaction.isCommand()) return;
 
-  if (interaction.commandName === 'hello') {
-    await interaction.reply('hello world!');
-  }
-
   if (interaction.commandName === "bank-info") {
     //create image
     var icon = "";
@@ -258,7 +254,6 @@ client.on('interactionCreate', async interaction => {
   }
 
   if (interaction.commandName === "xp") {
-    var id = interaction.user.id;
     await interaction.reply("https://www.youtube.com/watch?v=dQw4w9WgXcQ", {ephemeral: true});
   }
   if (interaction.commandName === "bank-createaccount") {
@@ -523,12 +518,18 @@ client.on('interactionCreate', async interaction => {
         serverSocketConnection.send("list");
         setTimeout(async () => {
           additionalInfo += "\n**Игроков на сервере:** " + latestSocketData;
-          await interaction.reply({embeds: [make_bank_message(additionalInfo)]});
+          await interaction.reply({embeds: [make_norches_message(additionalInfo)]});
         }, 500);
       }, 500);
     } else {
-      await interaction.reply({embeds: [make_bank_message("**Извините!**\nНе удалось **получить информацию** от сервера")]});
+      await interaction.reply({embeds: [make_norches_message("**Извините!**\nНе удалось **получить информацию** от сервера")]});
     }
+  }
+  if (interaction.commandName === "bank-reset"){
+    read_private();
+    sprivate.bank = JSON.stringify({bank: { ncoin: { value: 0, history: [] }, players: [], timers: [] }});
+    save_private();
+    await interaction.reply({embeds: [make_bank_message("**База данных банка успешно сброшена до изначального состояния**")]});
   }
   if (interaction.commandName === "norches-donationevent-test"){
     var action = interaction.options.getInteger("action", true);
