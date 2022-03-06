@@ -324,6 +324,6 @@
 	"scheduler": true,
 	"bank": {
 		"currency": "Мембрана фантома",
-		"version": "0.3"
+		"version": "0.4"
 	}
 }

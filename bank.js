@@ -43,7 +43,7 @@ var remove_bank_account = (id = "") => {
     if(b.player_object[6] == false) return -1;
     sprivate.bank.players[b.counter][6] = false;
     save_private();
-    return 0;
+    return b.counter;
 }
 var check_access = (id = "", type = 0, id2 = "", uid = "") => {
     var res = -1;
@@ -92,3 +92,5 @@ module.exports = {
     check_linked: check_linked,
     count_linked: count_linked
 }
+
+console.log("Libbank loaded");
