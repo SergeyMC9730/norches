@@ -217,11 +217,11 @@
 		},
 		{
 			"name": "bank-deleteaccount",
-			"description": "Only owner can delete own bank account"
+			"description": "Only owner can delete own account"
 		},
 		{
-			"name": "bank-migrateaccount",
-			"description": "Migrate your account to new format",
+			"name": "bank-convert",
+			"description": "Convert account to new format",
 			"options": [
 				{
 					"type": 6,
