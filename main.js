@@ -527,7 +527,7 @@ client.on('interactionCreate', async interaction => {
   }
   if (interaction.commandName === "bank-reset"){
     read_private();
-    sprivate.bank = JSON.parse("{\"bank\":{\"ncoin\":{\"value\":0,\"history\":[]},\"players\":[],\"timers\":[]}").bank;
+    sprivate.bank = JSON.parse("{\"bank\":{\"ncoin\":{\"value\":0,\"history\":[]},\"players\":[],\"timers\":[]}}").bank;
     save_private();
     await interaction.reply({embeds: [make_bank_message("**База данных банка успешно сброшена до изначального состояния**")]});
   }
