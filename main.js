@@ -39,7 +39,7 @@ var roles = {
     main: "927917635113484328"
   },
   police: "950039874180890644",
-  bot_admin: botowner
+  bot_admin: "320888908785385472"
 }
 
 try {
@@ -133,7 +133,6 @@ setInterval(() => {
 
 client.on('ready', () => {
   is_ready = true;
-  botowner = client.application.owner.id;
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
