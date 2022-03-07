@@ -87,7 +87,7 @@
 					"choices": [
 						{
 							"name": "Add",
-							"value": "remove"
+							"value": "add"
 						},
 						{
 							"name": "Remove",

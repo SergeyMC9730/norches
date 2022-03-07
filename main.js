@@ -456,8 +456,6 @@ client.on('interactionCreate', async interaction => {
     }
   }
   if (interaction.commandName === "bank-changebalance") {
-    
-
     read_private();
     var id1 = interaction.user.id;
     var id2 = interaction.options.getString("id2rem", true);
@@ -518,6 +516,7 @@ client.on('interactionCreate', async interaction => {
               await interaction.reply({embeds: [make_bank_message(`Извините!\nУ Вас **нет доступа к запрошенному аккаунту!**`)]});
             }
           }
+          break;
         }
       }
     }
