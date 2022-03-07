@@ -322,6 +322,7 @@
 	"print_token": false,
 	"print_appid": false,
 	"scheduler": true,
+	"debugger": true,
 	"bank": {
 		"currency": "Мембрана фантома",
 		"version": "0.4"

@@ -204,6 +204,13 @@ client.on('interactionCreate', async interaction => {
 
   var user_roles = interaction.member.roles.cache;
 
+  if(settings.debugger){
+    console.log(user_roles.some(role => role.id === roles.bank.base) || !user_roles.some(role => role.id === roles.bank.main));
+    console.log(user_roles.some(role => role.id === roles.player));
+    console.log(user_roles.some(role => role.id === roles.police));
+    console.log(interaction.user.id == roles.bot_admin);
+  }
+
   if (interaction.commandName === "bank-info") {
     //create image
     var icon = "";
