@@ -31,7 +31,6 @@ var latestSocketData = "";
 var latestRequest = "";
 
 var kazna = 3046;
-var botowner;
 var roles = {
   player: "927918475878498364",
   bank: {
@@ -73,6 +72,26 @@ try {
 
 //Init libpaint
 if(libpaint.extended.isnan(libpaint.user.getuserpaintings("0"))) libpaint.user.createuserdata("0");
+//Change ASCII symbols
+libpaint.paint.asciidata["na"] = " `";
+libpaint.paint.asciidata["30"] = " -";
+libpaint.paint.asciidata["31"] = " +";
+libpaint.paint.asciidata["32"] = " <";
+libpaint.paint.asciidata["33"] = " i";
+libpaint.paint.asciidata["34"] = " [";
+libpaint.paint.asciidata["35"] = " m";
+libpaint.paint.asciidata["36"] = " @";
+
+var lightinglevel = {
+  "7": "36",
+  "6": "35",
+  "5": "34",
+  "4": "33",
+  "3": "32",
+  "2": "31",
+  "1": "30",
+  "0": "na"
+};
 
 var update_commands = () => {
   sprivate.guilds.forEach(function (g) {
@@ -228,43 +247,59 @@ client.on('interactionCreate', async interaction => {
       **Курс NCoin не доступен из-за нехватки информации о NCoin**
       `)]});
     } else {
+      //create image
       var ncoinh = libpaint.paint.createblankimg("Norches Bot", `NCoin history for ${new Date().toString()}`, "0");
       var lasth = sprivate.bank.ncoin.history.slice(-8);
       //get highest
       var tmp2 = lasth;
       tmp2 = tmp2.sort().slice(-1) - 7;
+
+      //generate image
       var p = [];
       var j = 0;
       var copy = [];
       var temp = ncoinh.image.bytearray;
+      //prevent drawing pixels by negative y
       while(j < 8){
         copy[j] = (lasth[j] < 0) ? lasth[j] - lasth[j] - lasth[j] : lasth[j];
         j++;
       }
       j = 0;
+
+      //render variable
       var render = "";
+      //render image properly
       while(j < 8) copy[j++] -= tmp2;
       j = 0;
+      //limit y
       while(j < 8){
         if(copy[j] >= 7) copy[j] = 7;
         if(copy[j] <= 0) copy[j] = 0;
 
-        p.push([copy[j], j]);
+        p.push([copy[j], j]); //y, x
         j++;
       }
       j = 0;
+      //draw image
       while(j < 8){
-        temp = libpaint.paint.pixels.draw(p[j], "30", temp);
+        temp = libpaint.paint.pixels.draw(p[j], lightinglevel[p[j][0].toString()], temp);
+        var yy = 0;
+        while(yy < p[j][0]){
+          temp = libpaint.paint.pixels.draw([[p][j][0] - yy, [p][j][1]], lightinglevel[(p[j][0] - yy).toString()], temp);
+          y++;
+        }
         j++;
       }
+      //render it
       render = libpaint.paint.renderpaint(libpaint.extended.mergebytes(temp).bytestring, [0, 0], true, true);
+      //send message
       await interaction.reply({ embeds: [make_bank_message(`
-      **Валюта:** <:membrane:931940593179979806> ${settings.bank.currency}
-      **Цена NCoin:** \`${sprivate.bank.ncoin.value}\` ${icon}
-      **Игроков в банке:** \`${sprivate.bank.players.length}\`
-      **Последняя версия структуры аккаунтов:** **\`${settings.bank.version}\`**
-      **Курс NCoin:**
-      ${render}
+        **Валюта:** <:membrane:931940593179979806> ${settings.bank.currency}
+        **Цена NCoin:** \`${sprivate.bank.ncoin.value}\` ${icon}
+        **Игроков в банке:** \`${sprivate.bank.players.length}\`
+        **Последняя версия структуры аккаунтов:** **\`${settings.bank.version}\`**
+        **Курс NCoin:**
+        ${render}
       `)]});
     }
   }
