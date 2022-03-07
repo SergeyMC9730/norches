@@ -286,7 +286,7 @@ client.on('interactionCreate', async interaction => {
         var yy = 0;
         while(yy < p[j][0]){
           temp = libpaint.paint.pixels.draw([p[j][0] - yy, p[j][1]], lightinglevel[(p[j][0] - yy).toString()], temp);
-          y++;
+          yy++;
         }
         j++;
       }
