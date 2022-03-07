@@ -198,15 +198,17 @@ setInterval(() => {
   })
 }, 60 * 1000) //scheduler
 
+var roleCheck = (rid, rc) => {return rc.some(role => role.id == rid);}
+
 client.on('interactionCreate', async interaction => {
   if (!interaction.isCommand()) return;
 
   var user_roles = interaction.member.roles.cache;
 
   if(settings.debugger){
-    console.log(user_roles.some(role => role.id === roles.bank.base) || !user_roles.some(role => role.id === roles.bank.main));
-    console.log(user_roles.some(role => role.id === roles.player));
-    console.log(user_roles.some(role => role.id === roles.police));
+    console.log(roleCheck(roles.bank.base, user_roles), roleCheck(roles.bank.main, user_roles));
+    console.log(roleCheck(roles.player, user_roles));
+    console.log(roleCheck(roles.police, user_roles));
     console.log(interaction.user.id == roles.bot_admin);
   }
 
@@ -276,7 +278,7 @@ client.on('interactionCreate', async interaction => {
     await interaction.reply("https://www.youtube.com/watch?v=dQw4w9WgXcQ", {ephemeral: true});
   }
   if (interaction.commandName === "bank-createaccount") {
-    if(!user_roles.some(role => role.id === roles.bank.base) || !user_roles.some(role => role.id === roles.bank.main)){
+    if(!roleCheck(roles.bank.base, user_roles)){
       return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
     }
 
@@ -310,7 +312,7 @@ client.on('interactionCreate', async interaction => {
     }
   }
   if (interaction.commandName === "bank-changestatus") {
-    if(!user_roles.some(role => role.id === roles.player)){
+    if(!roleCheck(roles.player, user_roles)){
       return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
     }
 
@@ -346,12 +348,12 @@ client.on('interactionCreate', async interaction => {
   if(interaction.commandName === "bank-convert") {
     var user = interaction.options.getUser("user", false);
     if(user != null){
-      if(!user_roles.some(role => role.id === roles.bank.base) || !user_roles.some(role => role.id === roles.bank.main)){
+      if(!roleCheck(roles.bank.base, user_roles)){
         return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
       }
     }
     if(user == null) {
-      if(!user_roles.some(role => role.id === roles.player)){
+      if(!roleCheck(roles.player, user_roles)){
         return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
       }
       user = interaction.user;
@@ -435,7 +437,7 @@ client.on('interactionCreate', async interaction => {
       id1 = libbank.get_bank_account(interaction.user.id, 0).player_object[4][0].bid;
       switch(action){
         case "set": {
-          if(!user_roles.some(role => role.id === roles.bank.base) || !user_roles.some(role => role.id === roles.bank.main)){
+          if(!roleCheck(roles.bank.base, user_roles)){
             return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
           }
           sprivate.bank.players[libbank.get_bank_account(id1, 1).counter][3] = value;
@@ -447,10 +449,9 @@ client.on('interactionCreate', async interaction => {
           break;
         }
         case "add": {
-          if(!user_roles.some(role => role.id === roles.bank.base) || !user_roles.some(role => role.id === roles.bank.main)){
+          if(!roleCheck(roles.bank.base, user_roles)){
             return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
           }
-
 
           sprivate.bank.players[libbank.get_bank_account(id1, 1).counter][3] += value;
           sprivate.bank.ncoin.value += Math.floor(value % 64 / 5);
@@ -461,7 +462,7 @@ client.on('interactionCreate', async interaction => {
           break;
         }
         case "remove": {
-          if(!user_roles.some(role => role.id === roles.player)){
+          if(!roleCheck(roles.player, user_roles)){
             return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
           }
           //check access to id2 and id1
@@ -487,7 +488,7 @@ client.on('interactionCreate', async interaction => {
     }
   }
   if (interaction.commandName === "bank-schedule") {
-    if(!user_roles.some(role => role.id === roles.police) || (!user_roles.some(role => role.id === roles.bank.base) || !user_roles.some(role => role.id === roles.bank.main))){
+    if(!roleCheck(roles.bank.base, user_roles) || !roleCheck(roles.police, user_roles)){
       return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
     }
 
@@ -521,7 +522,7 @@ client.on('interactionCreate', async interaction => {
     await interaction.reply({embeds: [make_bank_message(`Извините!\n*Не "Извините!"*, ID запланированной задачи: **\`${sid}\`**`)]});
   }
   if (interaction.commandName === "bank-unschedule") {
-    if(!user_roles.some(role => role.id === roles.police) || (!user_roles.some(role => role.id === roles.bank.base) || !user_roles.some(role => role.id === roles.bank.main))){
+    if(!roleCheck(roles.bank.base, user_roles) || !roleCheck(roles.police, user_roles)){
       return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
     }
 
@@ -536,7 +537,7 @@ client.on('interactionCreate', async interaction => {
     }
   }
   if (interaction.commandName === "bank-link"){
-    if(!user_roles.some(role => role.id === roles.player)){
+    if(!roleCheck(roles.player, user_roles)){
       return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
     }
     var user = interaction.options.getUser("user", true);
@@ -562,7 +563,7 @@ client.on('interactionCreate', async interaction => {
     }
   }
   if(interaction.commandName === "bank-unlink"){
-    if(!user_roles.some(role => role.id === roles.player)){
+    if(!roleCheck(roles.player, user_roles)){
       return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
     }
     var user = interaction.options.getUser("user", true);
@@ -633,7 +634,7 @@ client.on('interactionCreate', async interaction => {
     }
   }
   if (interaction.commandName === "bank-deleteaccount") {
-    if(!user_roles.some(role => role.id === roles.player)){
+    if(!roleCheck(roles.player, user_roles)){
       return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
     }
 
