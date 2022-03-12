@@ -81,7 +81,7 @@ libpaint.paint.asciidata["33"] = " i";
 libpaint.paint.asciidata["34"] = " [";
 libpaint.paint.asciidata["35"] = " m";
 libpaint.paint.asciidata["36"] = " @";
-libpaint.paint.asciidata["0f"] = "  ";
+libpaint.paint.asciidata["0f"] = " .";
 
 var lightinglevel = {
   "7": "na",
