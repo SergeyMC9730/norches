@@ -260,6 +260,27 @@
 			"description": "Norches info"
 		},
 		{
+			"name": "bank-changelang",
+			"description": "Change language",
+			"options": [
+				{
+					"type": 3,
+					"name": "lang",
+					"description": "Language to change",
+					"choices": [
+						{
+							"name": "Russian (русский)",
+							"value": "ru"
+						},
+						{
+							"name": "English (English)",
+							"value": "en"
+						}
+					]
+				}
+			]
+		},
+		{
 			"name": "norches-donationevent-test",
 			"description": "Checks if donation event system is working",
 			"options": [
@@ -325,6 +346,6 @@
 	"debugger": true,
 	"bank": {
 		"currency": "Мембрана фантома",
-		"version": "0.4"
+		"version": "1.0"
 	}
 }

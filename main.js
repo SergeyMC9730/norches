@@ -5,6 +5,19 @@ var fs = require("fs");
 var settings = JSON.parse(fs.readFileSync("settings.json").toString("utf8"));
 var ws = require("ws");
 
+//add string formatting feature
+if (!String.prototype.format) {
+  String.prototype.format = function() {
+    var args = arguments;
+    return this.replace(/{(\d+)}/g, function(match, number) { 
+      return typeof args[number] != 'undefined'
+        ? args[number]
+        : match
+      ;
+    });
+  };
+}
+
 var token = process.argv[2];
 var clientid = process.argv[3];
 var libpaint = require("./libpaint/main")
@@ -180,6 +193,7 @@ var function0 = (arr = [0, 0, 0]) => {
 //bank-link - Player with Professional status
 //bank-unlink - Player with Professional status
 //bank-reset - Bot Admin
+//bank-changelang - Player
 //norches-info - Everyone
 
 setInterval(() => {
@@ -245,7 +259,7 @@ client.on('interactionCreate', async interaction => {
       **Цена NCoin:** \`${sprivate.bank.ncoin.value}\` ${icon}
       **Игроков в банке:** \`${sprivate.bank.players.length}\`
       **Последняя версия структуры аккаунтов:** **\`${settings.bank.version}\`**
-      **Курс NCoin не доступен из-за нехватки информации о NCoin**
+      **Курс NCoin не доступен из-за нехватки информации**
       `)]});
     } else {
       //create image
@@ -267,7 +281,6 @@ client.on('interactionCreate', async interaction => {
       }
       j = 0;
 
-      //render variable
       var render = "";
       //render image properly
       while(j < 8) copy[j++] -= tmp2;
@@ -336,7 +349,8 @@ client.on('interactionCreate', async interaction => {
       // 8 - account version
       // 9 - messages
       //10 - last activity
-      sprivate.bank.players.push([user.id, nick, name, 0, [{bid: `${id}`, did: user.id}], null, true, "personal", settings.bank.version, [], Date()]);
+      //11 - default language
+      sprivate.bank.players.push([user.id, nick, name, 0, [{bid: `${id}`, did: user.id}], null, true, "personal", settings.bank.version, [], Date(), "en"]);
       save_private();
       if(interaction.user.id == user.id){
         await interaction.reply({embeds: [make_bank_message(`**Ваш аккаунт был успешно создан!**\nID аккаунта: **\`${id}\`**`)]}); 
@@ -361,6 +375,9 @@ client.on('interactionCreate', async interaction => {
       read_private();
       if(status == "professional"){
         if(sprivate.bank.players[libbank.get_bank_account(id, 1).counter][3] >= 24){
+          sprivate.bank.players[libbank.get_bank_account(id, 1).counter][3] -= 24;
+          sprivate.bank.players[libbank.get_bank_account(kazna, 1).counter][3] += 24;
+          sprivate.bank.players[libbank.get_bank_account(kazna, 1).counter][10] = Date()
           sprivate.bank.players[libbank.get_bank_account(id, 1).counter][7] = status;
           sprivate.bank.players[libbank.get_bank_account(id, 1).counter][10] = Date();
           save_private();
@@ -380,6 +397,21 @@ client.on('interactionCreate', async interaction => {
         interaction.reply({embeds: [make_bank_message(`**Статус аккаунта был успешно изменён!**`)]});
       }
     }
+  }
+  if(interaction.commandName === "bank-changelang"){
+    var user = interaction.user;
+    var lang = interaction.options.getString("lang", true);
+    if(!libbank.get_bank_account(user.id, 0).is_valid){
+      return await interaction.reply({embeds: [make_norches_message(`Извините!\nЗапрошенный аккаунт **не существует!**`)]});
+    }
+    if(!roleCheck(roles.player, user_roles)){
+      return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
+    }
+    read_private();
+    sprivate.bank.players[libbank.get_bank_account(user.id, 0).counter][11] = lang;
+    sprivate.bank.players[libbank.get_bank_account(user.id, 0).counter][10] = Date();
+    save_private();
+    return await interaction.reply({embeds: [make_norches_message(`**Язык успешно изменён!**`)]});
   }
   if(interaction.commandName === "bank-convert") {
     var user = interaction.options.getUser("user", false);
@@ -414,15 +446,24 @@ client.on('interactionCreate', async interaction => {
         }
         case "0.2": {
           sprivate.bank.players[libbank.get_bank_account(user.id, 0).counter][9] = [];
+          sprivate.bank.players[libbank.get_bank_account(user.id, 0).counter][8] = "0.3";
           save_private();
           interaction.reply({embeds: [make_bank_message(`**Аккаунт был успешно конвертирован на 0.3!**`)]});
           break;
         }
         case "0.3": {
           sprivate.bank.players[libbank.get_bank_account(user.id, 0).counter][10] = Date();
+          sprivate.bank.players[libbank.get_bank_account(user.id, 0).counter][8] = "0.4";
           save_private();
           interaction.reply({embeds: [make_bank_message(`**Аккаунт был успешно конвертирован на 0.4!**`)]});
           break;
+        }
+        case "0.4": {
+          sprivate.bank.players[libbank.get_bank_account(user.id, 0).counter][11] = "en";
+          sprivate.bank.players[libbank.get_bank_account(user.id, 0).counter][10] = Date();
+          sprivate.bank.players[libbank.get_bank_account(user.id, 0).counter][8] = "1.0";
+          save_private();
+          interaction.reply({embeds: [make_bank_message(`**Аккаунт был успешно конвертирован на 1.0!**\nРекомендуем **сменить язык аккаунта.** По умолчанию он \`en\``)]});
         }
         default: {
           sprivate.bank.players[libbank.get_bank_account(user.id, 0).counter][5] = `${sprivate.bank.players[libbank.get_bank_account(user.id, 0).counter][5]}`;
@@ -500,10 +541,11 @@ client.on('interactionCreate', async interaction => {
             return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
           }
           //check access to id2 and id1
-          if(libbank.get_bank_account(id2, 1).is_valid == false) {
-            interaction.reply({embeds: [make_bank_message(`Извините!\nЗапрошенный аккаунт **не существует!**`)]})
-          } else {
-            if(libbank.check_access(id1, 1, id2, interaction.user.id) == 0){
+          if(libbank.get_bank_account(id2, 1).is_valid == false) {           
+             if(libbank.check_access(id1, 1, id2, interaction.user.id) == 0){
+              if((sprivate.bank.players[libbank.get_bank_account(id1, 1).counter][3] - value) < 0){
+                return await interaction.reply({embeds: [make_bank_message(`Извините!\nУ Вас **недостаточно средств!**`)]});
+              }
               sprivate.bank.players[libbank.get_bank_account(id1, 1).counter][3] -= value;
               sprivate.bank.players[libbank.get_bank_account(id2, 1).counter][3] += value;
               sprivate.bank.ncoin.value -= (sprivate.bank.ncoin.value == 0 || sprivate.bank.ncoin.value < 0) ? -(1) : Math.round(value % 64 / 5);
@@ -537,6 +579,7 @@ client.on('interactionCreate', async interaction => {
     if(user.id == interaction.user.id){
       return await interaction.reply({embeds: [make_bank_message(`Извините!\nВы не можете запланировать действие на **свой же аккаунт!**`)]});
     }
+
     read_private();
     if(!libbank.get_bank_account(user.id, 0).is_valid) {
       return await interaction.reply({embeds: [make_bank_message(`Извините!\nЗапрошенный аккаунт **не существует!**`)]});
@@ -554,7 +597,7 @@ client.on('interactionCreate', async interaction => {
     //structure of timer
     //{start_time: unix_time, end_time: unix_time, action: string, id: number, warn_message: string, arguments: []}
     save_private();
-    await interaction.reply({embeds: [make_bank_message(`Извините!\n*Не "Извините!"*, ID запланированной задачи: **\`${sid}\`**`)]});
+    await interaction.reply({embeds: [make_bank_message(`ID запланированной задачи: **\`${sid}\`**`)]});
   }
   if (interaction.commandName === "bank-unschedule") {
     if(!roleCheck(roles.bank.base, user_roles) || !roleCheck(roles.police, user_roles)){
@@ -564,7 +607,7 @@ client.on('interactionCreate', async interaction => {
     var id = interaction.options.getInteger("id", true);
     read_private();
     if(typeof sprivate.bank.timers[id - 1] == "undefined" || sprivate.bank.timers[id - 1] == null){
-      await interaction.reply({embeds: [make_bank_message(`Извините!\nДанная задача **не существует**!`)]});
+      await interaction.reply({embeds: [make_bank_message(`Извините!\nДанная запланированная задача **не существует**!`)]});
     } else {
       sprivate.bank.timers[id - 1] = null;
       save_private();
@@ -677,10 +720,11 @@ client.on('interactionCreate', async interaction => {
     if(counter == -1){
       await interaction.reply({embeds: [make_bank_message(`Извините!\nДанный аккаунт **не существует!**`)]});
     } else {
-      sprivate.bank.players[kazna][3] += sprivate.bank.players[counter][3];
+      sprivate.bank.players[ibbank.get_bank_account(kazna, 1).counter][3] += sprivate.bank.players[counter][3];
       sprivate.bank.players[counter][3] = 0;
       sprivate.bank.players[counter][10] = Date();
-      sprivate.bank.players[kazna][10] = sprivate.bank.players[counter][10];
+      sprivate.bank.players[ibbank.get_bank_account(kazna, 1).counter][10] = sprivate.bank.players[counter][10];
+
       save_private();
       await interaction.reply({embeds: [make_bank_message(`
         **Аккаунт был успешно удалён!**
