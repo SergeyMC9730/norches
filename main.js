@@ -323,14 +323,14 @@ client.on('interactionCreate', async interaction => {
       //render it
       render = libpaint.paint.renderpaint(libpaint.extended.mergebytes(temp).bytestring, [0, 0], true, true);
       //send message
-      await interaction.reply({ embeds: [make_bank_message(`
-        **Валюта:** <:membrane:931940593179979806> ${settings.bank.currency}
-        **Цена NCoin:** \`${sprivate.bank.ncoin.value}\` ${icon}
-        **Игроков в банке:** \`${sprivate.bank.players.length}\`
-        **Последняя версия структуры аккаунтов:** **\`${settings.bank.version}\`**
-        **Курс NCoin:**
-        ${render}
-      `)]});
+      if(libbank.get_bank_account(interaction.user.id, 0).is_valid && libbank.get_bank_account(interaction.user.id, 0).player_object[8] == "1.0") lng = libbank.get_bank_account(interaction.user.id, 0).player_object[11];
+      await interaction.reply({ embeds: [make_bank_message(gtsf("bank-info.ncoin", lng, [
+        settings.bank.currency,
+        sprivate.bank.ncoin.value,
+        icon,
+        sprivate.bank.players.length,
+        settings.bank.version
+      ]))]});
     }
   }
 
