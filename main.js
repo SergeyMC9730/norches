@@ -4,6 +4,7 @@ var { Routes } = require('discord-api-types/v9');
 var fs = require("fs");
 var settings = JSON.parse(fs.readFileSync("settings.json").toString("utf8"));
 var ws = require("ws");
+var langlist = require("./lang.json");
 
 //add string formatting feature
 if (!String.prototype.format) {
@@ -52,6 +53,19 @@ var roles = {
   },
   police: "950039874180890644",
   bot_admin: "320888908785385472"
+}
+
+//get translated string formatted
+var gtsf = (s = "", l = "", f = ["", 0, true]) => {
+  var updlist = [];
+  f.forEach((ff) => {
+    updlist.push(`"${ff}"`);
+  })
+  if(!Object.keys(langlist).includes(l)) return -1;
+  if(!Object.keys(langlist[l]).includes(s)) return -1;
+  var result = "";
+  eval(`result = langlist[l][s].format(${updlist.toString()})`);
+  return result;
 }
 
 try {
@@ -247,6 +261,7 @@ client.on('interactionCreate', async interaction => {
   }
 
   if (interaction.commandName === "bank-info") {
+    var lng = "en";
     //create image
     var icon = "";
     if(sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length - 1] == sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length - 2]) icon = "⏺️"
@@ -254,13 +269,14 @@ client.on('interactionCreate', async interaction => {
       icon = (sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length - 1] > sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length - 2]) ? "🔼" : "⬇️";
     }
     if(sprivate.bank.ncoin.history.length < 8){
-      await interaction.reply({ embeds: [make_bank_message(`
-      **Валюта:** <:membrane:931940593179979806> ${settings.bank.currency}
-      **Цена NCoin:** \`${sprivate.bank.ncoin.value}\` ${icon}
-      **Игроков в банке:** \`${sprivate.bank.players.length}\`
-      **Последняя версия структуры аккаунтов:** **\`${settings.bank.version}\`**
-      **Курс NCoin не доступен из-за нехватки информации**
-      `)]});
+      if(libbank.get_bank_account(interaction.user.id, 0).is_valid && libbank.get_bank_account(interaction.user.id, 0).player_object[8] == "1.0") lng = libbank.get_bank_account(interaction.user.id, 0).player_object[11];
+      await interaction.reply({ embeds: [make_bank_message(gtsf("bank-info.no-ncoin", lng, [
+        settings.bank.currency,
+        sprivate.bank.ncoin.value,
+        icon,
+        sprivate.bank.players.length,
+        settings.bank.version
+      ]))]});
     } else {
       //create image
       var ncoinh = libpaint.paint.createblankimg("Norches Bot", `NCoin history for ${new Date().toString()}`, "0");
@@ -653,6 +669,7 @@ client.on('interactionCreate', async interaction => {
           sprivate.bank.players[libbank.get_bank_account(interaction.user.id, 0).counter][4][libbank.check_linked(libbank.get_bank_account(user.id, 0).player_object[4][0], libbank.get_bank_account(interaction.user.id, 0).player_object[4]).counter] = null;
           sprivate.bank.players[libbank.get_bank_account(interaction.user.id, 0).counter][10] = Date();
           save_private();
+          
         } else {
           await interaction.reply({embeds: [make_bank_message(`Извините!\nДанный аккаунт **не был соединён**`)]});
         }
@@ -721,10 +738,10 @@ client.on('interactionCreate', async interaction => {
     if(counter == -1){
       await interaction.reply({embeds: [make_bank_message(`Извините!\nДанный аккаунт **не существует!**`)]});
     } else {
-      sprivate.bank.players[ibbank.get_bank_account(kazna, 1).counter][3] += sprivate.bank.players[counter][3];
+      sprivate.bank.players[libbank.get_bank_account(kazna, 1).counter][3] += sprivate.bank.players[counter][3];
       sprivate.bank.players[counter][3] = 0;
       sprivate.bank.players[counter][10] = Date();
-      sprivate.bank.players[ibbank.get_bank_account(kazna, 1).counter][10] = sprivate.bank.players[counter][10];
+      sprivate.bank.players[libbank.get_bank_account(kazna, 1).counter][10] = sprivate.bank.players[counter][10];
 
       save_private();
       await interaction.reply({embeds: [make_bank_message(`
