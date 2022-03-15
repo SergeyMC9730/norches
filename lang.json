@@ -1,5 +1,8 @@
 {
+    "additional": ["ru"],
     "ru": {
+        "header.bank": "Банк",
+
         "bank-info.no-ncoin": "**Валюта:** <:membrane:931940593179979806> {0}\n**Цена NCoin:** `{1}` {2}\n**Игроков в банке:** `{3}`\n**Последняя версия структуры аккаунтов:** **`{4}`**\n**Курс NCoin не доступен из-за нехватки информации**",
         "bank-info.ncoin": "**Валюта:** <:membrane:931940593179979806> {0}\n**Цена NCoin:** `{1}` {2}\n**Игроков в банке:** `{3}`\n**Последняя версия структуры аккаунтов:** **`{4}`**\n**Курс NCoin:**\n{5}",
 
@@ -28,6 +31,7 @@
         
         "bank-convert.already-converted": "Извините!\nЗапрошенный аккаунт **уже был конвертирован!**",
         "bank-convert.success": "**Аккаунт был успешно конвентирован на {0}!**",
+        "bank-convert.success.lang": "**Аккаунт был успешно конвентирован на {0}!**\nРекомендуем **сменить язык аккаунта.** По умолчанию он `en` (English)",
 
         "bank-getaccount.success": "ID аккаунта: **`{0}`**\nНазвание аккаунта: **`{1}`**\nТип аккаунта: **{2}**\nНикнейм владельца: **`{3}`**\nВладелец: **<@{4}>**\nБаланс: **{5}** <:membrane:931940593179979806> {6}\nСоединённых аккаунтов: **{7}**\nОповещения: **{8}**\nПоследняя активность: **`{9}`**\n\nВерсия структуры аккаунта: **`{10}`**",
 
@@ -60,6 +64,8 @@
         "bank-deleteaccount.success": "**Аккаунт был успешно удалён!**"
     },
     "en": {
+        "header.bank": "Bank",
+
         "bank-info.no-ncoin": "**Currency:** <:membrane:931940593179979806> {0}\n**NCoin Price:** `{1}` {2}\n**Players Registered:** `{3}`\n**Latest Account Structure Version:** **`{4}`**\n**NCoin Exchange Rate is not avaliable due to lack of information**",
         "bank-info.ncoin": "**Currency:** <:membrane:931940593179979806> {0}\n**NCoin Price:** `{1}` {2}\n**Players Registered:** `{3}`\n**Latest Account Structure Version:** **`{4}`**\n**NCoin Exchange Rate:**\n{5}",
 
@@ -88,6 +94,7 @@
         
         "bank-convert.already-converted": "Error!\nRequested account have **already converted!**",
         "bank-convert.success": "**Account was successfully converted to {0}!**",
+        "bank-convert.success.lang": "**Account was successfully converted to {0}!**\nWe are recommending **to change your language to Russian**. It is `en` (English) by default",
 
         "bank-getaccount.success": "Account ID: **`{0}`**\nAccount Name: **`{1}`**\nAccount Type: **{2}**\nOwner Nickname: **`{3}`**\nOwner: **<@{4}>**\nBalance: **{5}** <:membrane:931940593179979806> {6}\nLinked Accounts: **{7}**\nMessages: **{8}**\nLast Activity: **`{9}`**\n\nAccount Structure Version: **`{10}`**",
 
