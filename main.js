@@ -209,6 +209,7 @@ var function0 = (arr = [0, 0, 0]) => {
 //bank-reset - Bot Admin
 //bank-changelang - Player
 //norches-info - Everyone
+//norches-ben - Everyone
 
 setInterval(() => {
   if(!settings.scheduler) return;
@@ -341,6 +342,9 @@ client.on('interactionCreate', async interaction => {
 
   if (interaction.commandName === "xp") {
     return await interaction.reply("https://www.youtube.com/watch?v=dQw4w9WgXcQ", {ephemeral: true});
+  }
+  if (interaction.commandName === "norches-ben") {
+    return await interaction.reply({embeds: [make_norches_message(!(Math.random() * 256 % 2) ? "No" : "Yes")], ephemeral: true})
   }
   if (interaction.commandName === "bank-createaccount") {
     if(!roleCheck(roles.bank.base, user_roles)){
