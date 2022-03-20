@@ -93,7 +93,7 @@
         "bank.account.type.personal": "Personal",
         "bank.account.type.professional": "Professional",
         "bank.account.not-converted": "Not Converted",
-        "bank.account.messages.not-exists": "Don't have any ones",
+        "bank.account.messages.not-exists": "Don't have any",
 
         "bank-changestatus.success": "**Account type was successfully changed!**",
         "bank-changestatus.money": "Error!\nYou **should to have 24 {0}** <:membrane:931940593179979806> on your balance to change account type!",

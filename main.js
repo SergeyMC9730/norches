@@ -501,7 +501,8 @@ client.on('interactionCreate', async interaction => {
         settings.bank.currency,
         libbank.count_linked(b.player_object[4]) - 1,
         (typeof b.player_object[9] == "undefined") ? gtsf("bank.account.not-converted", lng, []) : ((b.player_object[9].toString().length == 0) ? gtsf("bank.account.messages.not-exists", lng, []) : b.player_object[9].toString()),
-        (typeof b.player_object[10] == "undefined") ? gtsf("bank.account.not-converted", lng, []) : b.player_object[10]
+        (typeof b.player_object[10] == "undefined") ? gtsf("bank.account.not-converted", lng, []) : b.player_object[10],
+        b.player_object[8]
       ]), lng)]});
     } else {
       return await interaction.reply({embeds: [make_bank_message(gtsf("bank.account.doesnotexists", lng, []), lng)]}); 
