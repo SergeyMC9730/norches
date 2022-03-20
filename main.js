@@ -337,14 +337,16 @@ client.on('interactionCreate', async interaction => {
 
   if (interaction.commandName === "gen") {
     var gen = markovc.generate(300);
-    return await interaction.reply({embeds: [make_norches_message((gen.length < 4) ? gtsf("gen.error", lng, []) : gen)], ephemeral: true})
+    return await interaction.reply({embeds: [make_norches_message((gen.length < 4) ? gtsf("gen.error", lng, []) : gen)], ephemeral: true});
   }
 
   if (interaction.commandName === "xp") {
     return await interaction.reply("https://www.youtube.com/watch?v=dQw4w9WgXcQ", {ephemeral: true});
   }
   if (interaction.commandName === "norches-ben") {
-    return await interaction.reply({embeds: [make_norches_message(!(Math.random() * 256 % 2) ? "No" : "Yes")], ephemeral: true})
+    var benLookupTable = ["No", "Be-be", "Ho-ho-ho", "Yes"];
+    var blt_res = benLookupTable[Math.round(Math.random() * 256) % 4];
+    return await interaction.reply({embeds: [make_norches_message(blt_res)], ephemeral: true});
   }
   if (interaction.commandName === "bank-createaccount") {
     if(!roleCheck(roles.bank.base, user_roles)){
