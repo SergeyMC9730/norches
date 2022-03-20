@@ -12,7 +12,7 @@
         "xp.rickroll": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
 
         "bank-createaccount.own.success": "**Ваш аккаунт был успешно создан!**\nID аккаунта: **`{0}`**",
-        "bank.createaccount.success": "**Аккаунт был успешно создан!**\nID аккаунта: **`{0}`**",
+        "bank-createaccount.success": "**Аккаунт был успешно создан!**\nID аккаунта: **`{0}`**",
         "bank-createaccount.exists": "Извините!\nДанный аккаунт **уже был создан!**",
 
         "norches.access-denied": "Извините!\nУ вас **нет прав на выполнение данной команды!**",
@@ -79,7 +79,7 @@
         "xp.rickroll": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
 
         "bank-createaccount.own.success": "**Your account was successfully created!**\nAccount ID: **`{0}`**",
-        "bank.createaccount.success": "**Account was successfully created!**\nAccount ID: **`{0}`**",
+        "bank-createaccount.success": "**Account was successfully created!**\nAccount ID: **`{0}`**",
         "bank-createaccount.exists": "Error!\nThis account **have already created!**",
 
         "norches.access-denied": "Error!\nYou don't have **enough permissions to execute this command!**",

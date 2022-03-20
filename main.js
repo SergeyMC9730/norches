@@ -44,7 +44,7 @@ var serverSocketConnection;
 var latestSocketData = "";
 var latestRequest = "";
 
-var kazna = 3046;
+var kazna = 2108;
 var roles = {
   player: "927918475878498364",
   bank: {
