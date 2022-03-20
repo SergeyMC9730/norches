@@ -491,21 +491,20 @@ client.on('interactionCreate', async interaction => {
     if(user == null) user = interaction.user;
     if(libbank.get_bank_account(user.id).is_valid == true && libbank.get_bank_account(user.id).player_object[6] == true){
       var b = libbank.get_bank_account(user.id);
-      interaction.reply({embeds: [make_bank_message(`
-        ID аккаунта: **\`${b.player_object[5] == null ? b.player_object[4][0].bid : b.player_object[5]}\`**
-        Название аккаунта: **\`${b.player_object[2]}\`**
-        Тип аккаунта: **${(b.player_object[7] === "personal") ? "Персональный" : "Профессиональный"}**
-        Никнейм владельца: **\`${b.player_object[1]}\`**
-        Владелец: **<@${b.player_object[0]}>**
-        Баланс: **${b.player_object[3]}** <:membrane:931940593179979806> ${settings.bank.currency}
-        Соединённых аккаунтов: **${libbank.count_linked(b.player_object[4]) - 1}**
-        Оповещения: **${(b.player_object[9] === undefined) ? "Не конвертирован" : ((b.player_object[9].toString().length == 0) ? "Не имеются" : b.player_object[9].toString())}**
-        Последняя активность: **\`${(b.player_object[10] === "undefined") ? "Не конвертирован" : b.player_object[10]}\`**
-
-        Версия структуры аккаунта: **\`${(b.player_object[8] === undefined || b.player_object[8] === null) ? "Не конвертирован" : b.player_object[8]}\`**
-      `)]});
+      interaction.reply({embeds: [make_bank_message(gtsf("bank-getaccount.success", lng, [
+        (typeof b.player_object[5] == "undefined") ? b.player_object[4][0].bid : b.player_object[5],
+        b.player_object[2],
+        (b.player_object[7] === "personal") ? gtsf("bank.account.type.personal", lng, []) : gtsf("bank.account.type.personal", lng, []),
+        b.player_object[1],
+        b.player_object[0],
+        b.player_object[3],
+        settings.bank.currency,
+        libbank.count_linked(b.player_object[4]) - 1,
+        (typeof b.player_object[9] == "undefined") ? gtsf("bank.account.not-converted", lng, []) : ((b.player_object[9].toString().length == 0) ? gtsf("bank.account.messages.not-exists", lng, []) : b.player_object[9].toString()),
+        (typeof b.player_object[10] == "undefined") ? gtsf("bank.account.not-converted", lng, []) : b.player_object[10]
+      ]))]});
     } else {
-      interaction.reply({embeds: [make_bank_message(`Извините!\nЗапрошенный аккаунт **не существует!**`)]})
+      return await interaction.reply({embeds: [make_bank_message(gtsf("bank.account.doesnotexists", lng, []))]}); 
     }
   }
   if (interaction.commandName === "bank-changebalance") {
@@ -518,25 +517,25 @@ client.on('interactionCreate', async interaction => {
     if(value < 0) value = 0;
     
     if(libbank.get_bank_account(id1, 0).is_valid == false){
-      interaction.reply({embeds: [make_bank_message(`Извините!\nЗапрошенный аккаунт **не существует!**`)]})
+      return await interaction.reply({embeds: [make_bank_message(gtsf("bank.account.doesnotexists", lng, []))]}); 
     } else {
       id1 = libbank.get_bank_account(interaction.user.id, 0).player_object[4][0].bid;
       switch(action){
         case "set": {
           if(!roleCheck(roles.bank.base, user_roles)){
-            return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
+            return await interaction.reply({embeds: [make_bank_message(gtsf("norches.access-denied", lng, []))]}); 
           }
           sprivate.bank.players[libbank.get_bank_account(id1, 1).counter][3] = value;
           sprivate.bank.ncoin.value += Math.floor(value % 64 / 5);
           sprivate.bank.ncoin.history.push(sprivate.bank.ncoin.value);
           sprivate.bank.players[libbank.get_bank_account(id1, 1).counter][10] = Date();
           save_private();
-          await interaction.reply({embeds: [make_bank_message(`**Успешно установлено** ${value} <:membrane:931940593179979806> ${settings.bank.currency} аккаунту **\`${id1}\`**!`)]});
+          await interaction.reply({embeds: [make_bank_message(gtsf("bank-changebalance.set.success", lng, [value, settings.bank.currency, id1]))]});
           break;
         }
         case "add": {
           if(!roleCheck(roles.bank.base, user_roles)){
-            return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
+            return await interaction.reply({embeds: [make_bank_message(gtsf("norches.access-denied", lng, []))]}); 
           }
 
           sprivate.bank.players[libbank.get_bank_account(id1, 1).counter][3] += value;
@@ -544,18 +543,18 @@ client.on('interactionCreate', async interaction => {
           sprivate.bank.ncoin.history.push(sprivate.bank.ncoin.value);
           sprivate.bank.players[libbank.get_bank_account(id1, 1).counter][10] = Date();
           save_private();
-          await interaction.reply({embeds: [make_bank_message(`**Успешно зачислены** ${value} <:membrane:931940593179979806> ${settings.bank.currency} аккаунту **\`${id1}\`**!`)]});
+          await interaction.reply({embeds: [make_bank_message(gtsf("bank-changebalance.add.success", lng, [value, settings.bank.currency, id1]))]});
           break;
         }
         case "remove": {
           if(!roleCheck(roles.player, user_roles)){
-            return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
+            return await interaction.reply({embeds: [make_bank_message(gtsf("norches.access-denied", lng, []))]}); 
           }
           //check access to id2 and id1
           if(libbank.get_bank_account(id2, 1).is_valid == false) {           
              if(libbank.check_access(id1, 1, id2, interaction.user.id) == 0){
               if((sprivate.bank.players[libbank.get_bank_account(id1, 1).counter][3] - value) < 0){
-                return await interaction.reply({embeds: [make_bank_message(`Извините!\nУ Вас **недостаточно средств!**`)]});
+                return await interaction.reply({embeds: [make_bank_message(gtsf("bank-changebalance.money", lng, []))]}); 
               }
               sprivate.bank.players[libbank.get_bank_account(id1, 1).counter][3] -= value;
               sprivate.bank.players[libbank.get_bank_account(id2, 1).counter][3] += value;
@@ -565,9 +564,9 @@ client.on('interactionCreate', async interaction => {
               sprivate.bank.players[libbank.get_bank_account(id1, 1).counter][10] = Date();
               sprivate.bank.players[libbank.get_bank_account(id2, 1).counter][10] = sprivate.bank.players[libbank.get_bank_account(id2, 1).counter][10];
               save_private();
-              await interaction.reply({embeds: [make_bank_message(`**Успешно вычислены** ${value} <:membrane:931940593179979806> ${settings.bank.currency} аккаунту **\`${id1}\`** и добавлены аккаунту **\`${id2}\`**!`)]});
+              await interaction.reply({embeds: [make_bank_message(gtsf("bank-changebalance.remove.success", lng, [value, settings.bank.currency, id1]))]});
             } else {
-              await interaction.reply({embeds: [make_bank_message(`Извините!\nУ Вас **нет доступа к запрошенному аккаунту!**`)]});
+              await interaction.reply({embeds: [make_bank_message(gtsf("bank.account.access-denied", lng, []))]});
             }
           }
           break;
@@ -577,7 +576,7 @@ client.on('interactionCreate', async interaction => {
   }
   if (interaction.commandName === "bank-schedule") {
     if(!roleCheck(roles.bank.base, user_roles) || !roleCheck(roles.police, user_roles)){
-      return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
+      return await interaction.reply({embeds: [make_bank_message(gtsf("norches.access-denied", lng, []))]}); 
     }
 
     var user = interaction.options.getUser("user", true);
@@ -588,12 +587,12 @@ client.on('interactionCreate', async interaction => {
     var warn_message = interaction.options.getString("warn-message", true);
     var minutes = interaction.options.getInteger("minutes", true);
     if(user.id == interaction.user.id){
-      return await interaction.reply({embeds: [make_bank_message(`Извините!\nВы не можете запланировать действие на **свой же аккаунт!**`)]});
+      return await interaction.reply({embeds: [make_bank_message(gtsf("bank-schedule.error.myself", lng, []))]});
     }
 
     read_private();
     if(!libbank.get_bank_account(user.id, 0).is_valid) {
-      return await interaction.reply({embeds: [make_bank_message(`Извините!\nЗапрошенный аккаунт **не существует!**`)]});
+      return await interaction.reply({embeds: [make_bank_message(gtsf("bank.account.doesnotexists", lng, []))]});
     }
     //{ guilds: [], bank: { ncoin: { value: 0, history: [] }, players: [], timers: [] }, xp: { users: [], data: [] }, server: {WebSocketIP: "", WebSocketPort: 0} }
     var t = Date.now();
@@ -608,52 +607,52 @@ client.on('interactionCreate', async interaction => {
     //structure of timer
     //{start_time: unix_time, end_time: unix_time, action: string, id: number, warn_message: string, arguments: []}
     save_private();
-    await interaction.reply({embeds: [make_bank_message(`ID запланированной задачи: **\`${sid}\`**`)]});
+    await interaction.reply({embeds: [make_bank_message("bank-schedule.success", lng, [sid])]});
   }
   if (interaction.commandName === "bank-unschedule") {
     if(!roleCheck(roles.bank.base, user_roles) || !roleCheck(roles.police, user_roles)){
-      return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
+      return await interaction.reply({embeds: [make_bank_message(gtsf("norches.access-denied", lng, []))]}); 
     }
 
     var id = interaction.options.getInteger("id", true);
     read_private();
     if(typeof sprivate.bank.timers[id - 1] == "undefined" || sprivate.bank.timers[id - 1] == null){
-      await interaction.reply({embeds: [make_bank_message(`Извините!\nДанная запланированная задача **не существует**!`)]});
+      await interaction.reply({embeds: [make_bank_message(gtsf("bank-unschedule.error", lng, []))]});
     } else {
       sprivate.bank.timers[id - 1] = null;
       save_private();
-      await interaction.reply({embeds: [make_bank_message(`**Успешно удалена запланированная задача**`)]});
+      await interaction.reply({embeds: [make_bank_message(gtsf("bank-unschedule.success", lng, []))]});
     }
   }
   if (interaction.commandName === "bank-link"){
     if(!roleCheck(roles.player, user_roles)){
-      return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
+      return await interaction.reply({embeds: [make_bank_message(gtsf("norches.access-denied", lng, []))]}); 
     }
     var user = interaction.options.getUser("user", true);
     if(user.id == interaction.user.id) {
-      return await interaction.reply({embeds: [make_bank_message(`Извините!\nВы не можете добавить **самого себя!**`)]});
+      return await interaction.reply({embeds: [make_bank_message(gtsf("bank-link.error.myself", lng, []))]});
     }
     if(libbank.get_bank_account(user.id, 0).is_valid && libbank.get_bank_account(interaction.user.id, 0).is_valid){
       read_private();
       if(libbank.get_bank_account(interaction.user.id, 0).player_object[7] == "professional"){
         if(libbank.check_linked(libbank.get_bank_account(user.id, 0).player_object[4][0].bid, libbank.get_bank_account(interaction.user.id, 0).player_object[4]).is_valid){
-          await interaction.reply({embeds: [make_bank_message(`Извините!\nДанный аккаунт **уже соединён с вашим!**`)]});
+          return await interaction.reply({embeds: [make_bank_message(gtsf("bank-link.error.linked", lng, []))]});
         } else {
           sprivate.bank.players[libbank.get_bank_account(interaction.user.id, 0).counter][4].push(libbank.get_bank_account(user.id, 0).player_object[4][0]);
           sprivate.bank.players[libbank.get_bank_account(interaction.user.id, 0).counter][10] = Date();
           save_private();
-          await interaction.reply({embeds: [make_bank_message(`> **Включайте доступ к вашему аккаунту только игрокам, которым вы доверяете.** Игрок может *проводить транзакции* с *вашим аккаунтом*.\n> В руках злоумышленника такой доступ может *закончиться для вас трагедией.*\n**Успешно добавлен аккаунт к вашему!**`)]});
+          return await interaction.reply({embeds: [make_bank_message(gtsf("bank-link.success", lng, []))]});
         }
       } else {
-        await interaction.reply({embeds: [make_bank_message(`Извините!\nВаш аккаунт **не является профессиональным!**`)]});
+        return await interaction.reply({embeds: [make_bank_message(gtsf("bank.account.not-professional", lng, []))]});
       }
     } else {
-      await interaction.reply({embeds: [make_bank_message(`Извините!\nАккаунт **не существует!**`)]});
+      return await interaction.reply({embeds: [make_bank_message(gtsf("bank.account.doesnotexists", lng, []))]});
     }
   }
   if(interaction.commandName === "bank-unlink"){
     if(!roleCheck(roles.player, user_roles)){
-      return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
+      return await interaction.reply({embeds: [make_bank_message(gtsf("norches.access-denied", lng, []))]}); 
     }
     var user = interaction.options.getUser("user", true);
     if(libbank.get_bank_account(user.id, 0).is_valid && libbank.get_bank_account(interaction.user.id, 0).is_valid){
@@ -663,15 +662,15 @@ client.on('interactionCreate', async interaction => {
           sprivate.bank.players[libbank.get_bank_account(interaction.user.id, 0).counter][4][libbank.check_linked(libbank.get_bank_account(user.id, 0).player_object[4][0], libbank.get_bank_account(interaction.user.id, 0).player_object[4]).counter] = null;
           sprivate.bank.players[libbank.get_bank_account(interaction.user.id, 0).counter][10] = Date();
           save_private();
-          
+          return await interaction.reply({embeds: [make_bank_message(gtsf("bank-unlink.success", lng, []))]});
         } else {
-          await interaction.reply({embeds: [make_bank_message(`Извините!\nДанный аккаунт **не был соединён**`)]});
+          return await interaction.reply({embeds: [make_bank_message(gtsf("bank-unlink.error.unlinked", lng, []))]});
         }
       } else {
-        await interaction.reply({embeds: [make_bank_message(`Извините!\nВаш аккаунт **не является профессиональным!**`)]});
+        return await interaction.reply({embeds: [make_bank_message(gtsf("bank.account.not-professional", lng, []))]});
       }
     } else {
-      await interaction.reply({embeds: [make_bank_message(`Извините!\nАккаунт **не существует!**`)]});
+      return await interaction.reply({embeds: [make_bank_message(gtsf("bank.account.doesnotexists", lng, []))]});
     }
   }
   if (interaction.commandName === "norches-info") {
@@ -680,26 +679,26 @@ client.on('interactionCreate', async interaction => {
       latestRequest = "tps";
       serverSocketConnection.send("tps");
       setTimeout(() => {
-        additionalInfo += "**ТПС:** " + latestSocketData;
+        additionalInfo += gtsf("norches-info.success.tps", lng, []) + latestSocketData;
         latestRequest = "list"
         serverSocketConnection.send("list");
         setTimeout(async () => {
-          additionalInfo += "\n**Игроков на сервере:** " + latestSocketData;
+          additionalInfo += gtsf("norches-info.success.list", lng, []) + latestSocketData;
           await interaction.reply({embeds: [make_norches_message(additionalInfo)]});
         }, 500);
       }, 500);
     } else {
-      await interaction.reply({embeds: [make_norches_message("**Извините!**\nНе удалось **получить информацию** от сервера")]});
+      return await interaction.reply({embeds: [make_norches_message(gtsf("norches-info.error.na", lng, []))]});
     }
   }
   if (interaction.commandName === "bank-reset"){
     if(!interaction.user.id == roles.bot_admin) {
-      return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
+      return await interaction.reply({embeds: [make_bank_message(gtsf("norches.access-denied", lng, []))]}); 
     }
     read_private();
     sprivate.bank = JSON.parse("{\"bank\":{\"ncoin\":{\"value\":0,\"history\":[]},\"players\":[],\"timers\":[]}}").bank;
     save_private();
-    await interaction.reply({embeds: [make_bank_message("**База данных банка успешно сброшена до изначального состояния**")]});
+    return await interaction.reply({embeds: [make_bank_message(gtsf("bank-reset.success", lng, []))]});
   }
   if (interaction.commandName === "norches-donationevent-test"){
     var action = interaction.options.getInteger("action", true);
@@ -720,17 +719,17 @@ client.on('interactionCreate', async interaction => {
       serverSocketConnection.send(JSON.stringify(toSend));
       await interaction.reply({embeds: [make_bank_message(JSON.stringify(toSend))]});
     } else {
-      await interaction.reply({embeds: [make_bank_message("Извините!\nНе удалось подключиться к серверу!")]});
+      await interaction.reply({embeds: [make_bank_message(gtsf("norches.server.na", lng, []))]});
     }
   }
   if (interaction.commandName === "bank-deleteaccount") {
     if(!roleCheck(roles.player, user_roles)){
-      return await interaction.reply({embeds: [make_norches_message(`Извините!\nУ вас **нет прав на выполнение данной команды!**`)]});
+      return await interaction.reply({embeds: [make_bank_message(gtsf("norches.access-denied", lng, []))]}); 
     }
 
     var counter = libbank.remove_bank_account(interaction.user.id);
     if(counter == -1){
-      await interaction.reply({embeds: [make_bank_message(`Извините!\nДанный аккаунт **не существует!**`)]});
+      await interaction.reply({embeds: [make_bank_message(gtsf("bank.account.doesnotexists", lng, []))]});
     } else {
       sprivate.bank.players[libbank.get_bank_account(kazna, 1).counter][3] += sprivate.bank.players[counter][3];
       sprivate.bank.players[counter][3] = 0;
@@ -738,9 +737,7 @@ client.on('interactionCreate', async interaction => {
       sprivate.bank.players[libbank.get_bank_account(kazna, 1).counter][10] = sprivate.bank.players[counter][10];
 
       save_private();
-      await interaction.reply({embeds: [make_bank_message(`
-        **Аккаунт был успешно удалён!**
-        `)]});
+      await interaction.reply({embeds: [make_bank_message(gtsf("bank-deleteaccount.success", lng, []))]});
     }
   }
 });

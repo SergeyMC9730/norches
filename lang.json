@@ -16,13 +16,17 @@
         "bank-createaccount.exists": "Извините!\nДанный аккаунт **уже был создан!**",
 
         "norches.access-denied": "Извините!\nУ вас **нет прав на выполнение данной команды!**",
-        "norches.blocked": "+ratio",
+        "norches.blocked": "ratio",
         "norches.crash": "Norches Бот крашнулся по ошибке",
         "norches.server.na": "Извините!\nНе удалось **подключиться к серверу!**",
 
         "bank.account.doesnotexists": "Извините!\nЗапрошенный аккаунт **не существует!**",
         "bank.account.access-denied": "Извините!\nУ Вас **нет доступа к запрошенному аккаунту!**",
         "bank.account.not-professional": "Извините!\nВаш аккаунт **не является Профессиональным!**",
+        "bank.account.type.personal": "Персональный",
+        "bank.account.type.professional": "Профессиональный",
+        "bank.account.not-converted": "Не конвентирован",
+        "bank.account.messages.not-exists": "Не имеются",
 
         "bank-changestatus.success": "**Статус аккаунта был успешно изменён!**",
         "bank-changestatus.money": "Извините!\nДля изменения статуса аккаунта на Профессиональный на балансе **должно быть 24 {0}** <:membrane:931940593179979806>",
@@ -48,7 +52,7 @@
 
         "bank-link.error.myself": "Извините!\nВы не можете добавить **самого себя!**",
         "bank-link.error.linked": "Извините!\nДанный аккаунт **уже соединён с вашим!**",
-        "bank-link.success": "> **Включайте доступ к вашему аккаунту только игрокам, которым вы доверяете.** Игрок может *проводить транзакции* с *вашим аккаунтом*.\n> В руках злоумышленника такой доступ может *закончиться для вас трагедией.*\n**Успешно добавлен аккаунт к вашему!**",
+        "bank-link.success": "> **Включайте доступ к вашему аккаунту только игрокам, которым вы доверяете.** Игрок может *проводить транзакции* с *вашим аккаунтом*.\n> В руках злоумышленника такой доступ может *закончиться для вас трагедией.*\n**Аккаунт успешно соединён!**",
 
         "bank-unlink.error.unlinked": "Извините!\nДанный аккаунт **не был соединён**",
         "bank-unlink.success": "Аккаунт был **успешно отсоединён** от вашего!",
@@ -79,13 +83,17 @@
         "bank-createaccount.exists": "Error!\nThis account **have already created!**",
 
         "norches.access-denied": "Error!\nYou don't have **enough permissions to execute this command!**",
-        "norches.blocked": "+ratio",
+        "norches.blocked": "ratio",
         "norches.crash": "Norches Бот have crashed due to error ",
         "norches.server.na": "Error!\nUnable **to connect to the server!**",
 
         "bank.account.doesnotexists": "Error!\nRequested account **does not exists!**",
         "bank.account.access-denied": "Error!\nYou don't have **access to requested account!**",
         "bank.account.not-professional": "Error!\nYour account type **is not Professional**",
+        "bank.account.type.personal": "Personal",
+        "bank.account.type.professional": "Professional",
+        "bank.account.not-converted": "Not Converted",
+        "bank.account.messages.not-exists": "Don't have any ones",
 
         "bank-changestatus.success": "**Account type was successfully changed!**",
         "bank-changestatus.money": "Error!\nYou **should to have 24 {0}** <:membrane:931940593179979806> on your balance to change account type!",
