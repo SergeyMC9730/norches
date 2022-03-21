@@ -27,7 +27,7 @@ public class App extends JavaPlugin implements Listener {
 
     public SocketConnection current;
     public TPS tps;
-    public boolean isNorchesBuild = false;
+    public boolean isNorchesBuild = true;
     public short port = 25710;
     public Tools tools;
     public BukkitTask playerCheckTask = null;
