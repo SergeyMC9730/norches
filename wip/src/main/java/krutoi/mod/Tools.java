@@ -1,7 +1,5 @@
 package krutoi.mod;
 
-import java.util.Collection;
-
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 

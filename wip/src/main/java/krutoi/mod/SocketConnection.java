@@ -8,7 +8,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -25,6 +24,8 @@ public class SocketConnection extends WebSocketServer {
 
     public WebSocket client = null;
     public App plugin;
+    public boolean isKeySent = false;
+    public String userKey;
 
     public SocketConnection(short port) throws UnknownHostException {
         super(new InetSocketAddress((int)port));
@@ -66,52 +67,66 @@ public class SocketConnection extends WebSocketServer {
                             String contains = j.get("contains").getAsString();
                             String toPlayer = j.get("toPlayer").getAsString();
                             short action = j.get("action").getAsShort();
+                            String UKey = j.get("key").getAsString();
 
-                            if(plugin.getServer().getPlayerExact(toPlayer) != null){
-                                Player p = plugin.getServer().getPlayerExact(toPlayer);
-                                ConsoleCommandSender c = plugin.getServer().getConsoleSender(); 
-                                
-                                new BukkitRunnable() {
-                                    @Override
-                                    public void run() {
-                                        boolean isCommandSuccessful;
-                                        isCommandSuccessful = plugin.getServer().dispatchCommand(c, String.format(new ColorFormatter().colorFormat("title %s actionbar \"<cy>%s<r> - <clp>%d руб<r>: %s\""), toPlayer, author, size, contains));
-
-                                        plugin.getLogger().info("isCommandSuccessful state: " + isCommandSuccessful);      
+                            if(UKey == userKey && isKeySent) {
+                                if(plugin.getServer().getPlayerExact(toPlayer) != null){
+                                    Player p = plugin.getServer().getPlayerExact(toPlayer);
+                                    ConsoleCommandSender c = plugin.getServer().getConsoleSender(); 
+                                    
+                                    new BukkitRunnable() {
+                                        @Override
+                                        public void run() {
+                                            boolean isCommandSuccessful;
+                                            isCommandSuccessful = plugin.getServer().dispatchCommand(c, String.format(new ColorFormatter().colorFormat("title %s actionbar \"<cy>%s<r> - <clp>%d руб<r>: %s\""), toPlayer, author, size, contains));
+    
+                                            plugin.getLogger().info("isCommandSuccessful state: " + isCommandSuccessful);      
+                                        }
+                                    }.runTask(plugin);
+    
+                                    switch(action){
+                                        case 0: { //poison effect
+                                            p.addPotionEffect(new PotionEffect(PotionEffectType.POISON, plugin.tools.getTicks(16), 1, false, true));
+                                            break;
+                                        }
+                                        case 1: { //give to player a totem of undying
+                                            p.getInventory().addItem(new ItemStack(Material.TOTEM_OF_UNDYING, 1));
+                                            break;
+                                        }
+                                        case 2: { //hunger
+                                            p.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, plugin.tools.getTicks(24), 1, false, true));
+                                            break;
+                                        }
+                                        case 3: { //hurt player
+                                            p.damage(5);
+                                            break;
+                                        }
+                                        case 4: { //летучие мыши
+                                            //TODO Make it later
+                                            break;
+                                        }
                                     }
-                                }.runTask(plugin);
-
-                                switch(action){
-                                    case 0: { //poison effect
-                                        p.addPotionEffect(new PotionEffect(PotionEffectType.POISON, plugin.tools.getTicks(16), 1, false, true));
-                                        break;
-                                    }
-                                    case 1: { //give to player a totem of undying
-                                        p.getInventory().addItem(new ItemStack(Material.TOTEM_OF_UNDYING, 1));
-                                        break;
-                                    }
-                                    case 2: { //hunger
-                                        p.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, plugin.tools.getTicks(24), 1, false, true));
-                                        break;
-                                    }
-                                    case 3: { //hurt player
-                                        p.damage(5);
-                                        break;
-                                    }
-                                    case 4: { //летучие мыши
-                                        //TODO Make it later
-                                        break;
-                                    }
-                                }
+                                }   
                             }
-
+                            break;  
+                        }
+                        case "sendKey": {
+                            if(!isKeySent) {
+                                isKeySent = true;
+                                userKey = j.get("userKey").getAsString();
+                            }
+                            break;
+                        }
+                        default: {
+                            plugin.getLogger().warning("Unknown message type: " + j.get("type").getAsString());
+                            break;
                         }
                     }
                     //donation event
                     
                 } catch (JsonParseException e){
                     //something different
-                    plugin.getLogger().info("WebSocket connection has message for you: " + message);   
+                    plugin.getLogger().warning("Cannot parse JSON string!");
                 }
                 break;
             }
