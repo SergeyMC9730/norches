@@ -4,7 +4,7 @@ download:
 	rm ${MAVEN_PATH} -rfv
 	sudo apt-get update
 	sudo apt-get install wget unzip openjdk-17-jdk
-	wget "https://dlcdn.apache.org/maven/maven-3/3.8.4/binaries/apache-maven-3.8.4-bin.zip" -O ${MAVEN_PATH}.zip
+	wget "https://dlcdn.apache.org/maven/maven-3/3.8.5/binaries/apache-maven-3.8.5-bin.zip" -O ${MAVEN_PATH}.zip
 	unzip ${MAVEN_PATH}.zip
 	rm ${MAVEN_PATH}.zip
 	mv apache-maven-* ${MAVEN_PATH}
