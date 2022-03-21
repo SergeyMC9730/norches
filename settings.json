@@ -359,5 +359,6 @@
 	"bank": {
 		"currency": "Мембрана фантома",
 		"version": "1.0"
-	}
+	},
+	"benLookupTable": ["No", "Be-be", "Ho-ho-ho", "Yes"]
 }

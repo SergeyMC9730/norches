@@ -5,6 +5,7 @@ var fs = require("fs");
 var settings = JSON.parse(fs.readFileSync("settings.json").toString("utf8"));
 var ws = require("ws");
 var langlist = require("./lang.json");
+const { randomUUID } = require("crypto");
 
 //add string formatting feature
 if (!String.prototype.format) {
@@ -68,11 +69,18 @@ var gtsf = (s = "", l = "", f = ["", 0, true]) => {
   return result;
 }
 
+var securityLayerKey = "";
+
 try {
   serverSocketConnection = new ws(`${sprivate.server.WebSocketIP}:${sprivate.server.WebSocketPort}`);
   if(typeof serverSocketConnection != "undefined"){
     serverSocketConnection.on('open', (ws) => {
       isOpen = true;
+      securityLayerKey = randomUUID();
+      ws.send(JSON.stringify({
+        "type": "sendKey",
+        "userKey": securityLayerKey
+      }))
       console.log("Successfully connected to the server");
     })
     serverSocketConnection.on('error', (ws, err) => {
@@ -344,8 +352,7 @@ client.on('interactionCreate', async interaction => {
     return await interaction.reply("https://www.youtube.com/watch?v=dQw4w9WgXcQ", {ephemeral: true});
   }
   if (interaction.commandName === "norches-ben") {
-    var benLookupTable = ["No", "Be-be", "Ho-ho-ho", "Yes"];
-    var blt_res = benLookupTable[Math.round(Math.random() * 256) % 4];
+    var blt_res = settings.benLookupTable[Math.round(Math.random() * 256) % 4];
     return await interaction.reply({embeds: [make_norches_message(blt_res)], ephemeral: true});
   }
   if (interaction.commandName === "bank-createaccount") {
@@ -720,7 +727,8 @@ client.on('interactionCreate', async interaction => {
       author: author,
       contains: contains,
       toPlayer: player,
-      action: action
+      action: action,
+      key: securityLayerKey
     }
     if(isOpen){
       serverSocketConnection.send(JSON.stringify(toSend));
