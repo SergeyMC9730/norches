@@ -6,7 +6,7 @@ try {
         onsole.log(m.getTraslatedString("norches.backup", "ru", []));
 
         var dsc = require("discord.js");
-        var cln = new dsc.Client({intents: [Intents.FLAGS.GUILDS, djs.Intents.FLAGS.GUILD_MESSAGES]});
+        var cln = new dsc.Client({intents: [dsc.Intents.FLAGS.GUILDS, dsc.Intents.FLAGS.GUILD_MESSAGES]});
         cln.login(m.token);
         cln.on("ready", () => {
             cln.user.setStatus("idle");

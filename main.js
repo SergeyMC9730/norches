@@ -153,7 +153,7 @@ var read_private = () => {
 markovc.trainTxt("input_result.txt", "\n");
 
 var { Client, Intents, MessageEmbed } = require('discord.js');
-var client = new Client({intents: [Intents.FLAGS.GUILDS, djs.Intents.FLAGS.GUILD_MESSAGES]});
+var client = new Client({intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]});
 
 var is_ready = false;
 
