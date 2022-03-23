@@ -153,7 +153,7 @@ var read_private = () => {
 markovc.trainTxt("input_result.txt", "\n");
 
 var { Client, Intents, MessageEmbed } = require('discord.js');
-var client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+var client = new Client({intents: [Intents.FLAGS.GUILDS, djs.Intents.FLAGS.GUILD_MESSAGES]});
 
 var is_ready = false;
 
@@ -771,3 +771,11 @@ client.on("guildDelete", async (guild) => {
 });
 
 client.login(token);
+
+module.exports = {
+  getTraslatedString: gtsf,
+  settings: settings,
+  sprivate: sprivate,
+  token: process.argv[2],
+  clientid: process.argv[3]
+}

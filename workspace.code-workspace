@@ -8,6 +8,7 @@
 		}
 	],
 	"settings": {
-		"makefile.extensionOutputFolder": "./.vscode"
+		"makefile.extensionOutputFolder": "./.vscode",
+		"java.configuration.updateBuildConfiguration": "automatic"
 	}
 }
