@@ -196,12 +196,12 @@ client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
-var function0 = (arr = [0, 0, 0]) => {
-  var d = 0;
-  var res = 0;
-  while(d < arr.length) res += arr[d++];
-  return Math.round(res / arr.length);
-}
+// var function0 = (arr = [0, 0, 0]) => {
+//   var d = 0;
+//   var res = 0;
+//   while(d < arr.length) res += arr[d++];
+//   return Math.round(res / arr.length);
+// }
 
 //Permissions
 //bank-changestatus - Player
@@ -247,8 +247,51 @@ setInterval(() => {
           }
           case "add": {
             if(libbank.get_bank_account(t.arguments[0], 0).is_valid){
+              read_private();
               
+              sprivate.bank.players[libbank.get_bank_account(t.arguments[0], 0).counter][3] = t.arguments[1];
+              sprivate.bank.ncoin.value += Math.floor(t.arguments[1] % 64 / 5);
+              sprivate.bank.ncoin.history.push(sprivate.bank.ncoin.value);
+              sprivate.bank.players(libbank.get_bank_account(t.arguments[0], 0).counter)[10] = Date();
+              
+              save_private();
             }
+            break;
+          }
+          case "remove": {
+            if(libbank.get_bank_account(t.id, 1).is_valid && libbank.get_bank_account(t.arguments[0], 0).is_valid) {
+              read_private();
+
+              if((sprivate.bank.players[libbank.get_bank_account(t.arguments[0], 0).counter][3] - t.arguments[1]) > 0){
+                sprivate.bank.players[libbank.get_bank_account(t.arguments[0], 0).counter][3] -= t.arguments[1];
+                sprivate.bank.players[libbank.get_bank_account(t.id, 1).counter][3] += t.arguments[1];
+                sprivate.bank.ncoin.value -= (sprivate.bank.ncoin.value == 0 || sprivate.bank.ncoin.value < 0) ? -(1) : Math.round(t.arguments[1] % 64 / 5);
+                if(sprivate.bank.ncoin.value < 0) sprivate.bank.ncoin = 0;
+                sprivate.bank.ncoin.history.push(sprivate.bank.ncoin.value);
+                sprivate.bank.players[libbank.get_bank_account(t.arguments[0], 0).counter][10] = Date();
+                sprivate.bank.players[libbank.get_bank_account(t.id, 1).counter][10] = Date();
+              }
+
+              save_private();
+            }
+            break;
+          }
+          case "set": {
+            if(libbank.get_bank_account(t.arguments[0], 0).is_valid) {
+              read_private();
+
+              sprivate.bank.players[libbank.get_bank_account(t.arguments[0], 0).counter][3] = t.arguments[1];
+              sprivate.bank.ncoin.value += Math.floor(value % 64 / 5);
+              sprivate.bank.ncoin.history.push(sprivate.bank.ncoin.value);
+              sprivate.bank.players[libbank.get_bank_account(t.arguments[0], 0).counter][10] = Date();
+
+              save_private();
+            }
+            break;
+          }
+          default: {
+            console.warn("Action %s not found!", t.action);
+            break;
           }
         }        
 
@@ -312,7 +355,7 @@ client.on('interactionCreate', async interaction => {
       j = 0;
 
       var render = "";
-      //render image properly
+      //render image
       while(j < 8) copy[j++] -= tmp2;
       j = 0;
       //limit y
@@ -570,7 +613,7 @@ client.on('interactionCreate', async interaction => {
             return await interaction.reply({embeds: [make_bank_message(gtsf("norches.access-denied", lng, []), lng)]}); 
           }
           //check access to id2 and id1
-          if(libbank.get_bank_account(id2, 1).is_valid == false) {           
+          if(libbank.get_bank_account(id2, 1).is_valid) {           
              if(libbank.check_access(id1, 1, id2, interaction.user.id) == 0){
               if((sprivate.bank.players[libbank.get_bank_account(id1, 1).counter][3] - value) < 0){
                 return await interaction.reply({embeds: [make_bank_message(gtsf("bank-changebalance.money", lng, []), lng)]}); 
@@ -619,9 +662,9 @@ client.on('interactionCreate', async interaction => {
       start_time: t,
       end_time: t += (minutes * 60 * 1000),
       action: action,
-      id: 0, //unused
+      id: id2,
       warn_message: warn_message,
-      arguments: [user.id]
+      arguments: [user.id, value]
     });
     //structure of timer
     //{start_time: unix_time, end_time: unix_time, action: string, id: number, warn_message: string, arguments: []}

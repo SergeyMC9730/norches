@@ -163,15 +163,15 @@
 						},
 						{
 							"name": "Add to balance",
-							"value": "add2b"
+							"value": "add"
 						},
 						{
 							"name": "Remove from balance",
-							"value": "remove4b"
+							"value": "remove"
 						},
 						{
 							"name": "Set balance",
-							"value": "set2b"
+							"value": "set"
 						}
 					],
 					"required": true
@@ -327,7 +327,7 @@
 				{
 					"type": 4,
 					"name": "size",
-					"description": "Сколько рубликов",
+					"description": "Сумма",
 					"required": true
 				},
 				{
