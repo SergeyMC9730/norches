@@ -68,6 +68,11 @@ var gtsf = (s = "", l = "", f = ["", 0, true]) => {
   eval(`result = langlist[l][s].format(${updlist.toString()})`);
   return result;
 }
+var getCurrency = (lang = "") => {
+  if(!Object.keys(settings.bank.currency).includes(l)) return "Error\nUnable to **find translation** provided **by `lang` argument**";
+  
+  return settings.bank.currency[lang];
+}
 
 var securityLayerKey = "";
 
@@ -280,7 +285,7 @@ client.on('interactionCreate', async interaction => {
     }
     if(sprivate.bank.ncoin.history.length < 8){
       await interaction.reply({ embeds: [make_bank_message(gtsf("bank-info.no-ncoin", lng, [
-        settings.bank.currency,
+        getCurrency(lng),
         sprivate.bank.ncoin.value,
         icon,
         sprivate.bank.players.length,
@@ -333,7 +338,7 @@ client.on('interactionCreate', async interaction => {
       render = libpaint.paint.renderpaint(libpaint.extended.mergebytes(temp).bytestring, [0, 0], true, true);
       //send message
       await interaction.reply({ embeds: [make_bank_message(gtsf("bank-info.ncoin", lng, [
-        settings.bank.currency,
+        getCurrency(lng),
         sprivate.bank.ncoin.value,
         icon,
         sprivate.bank.players.length,
@@ -412,7 +417,7 @@ client.on('interactionCreate', async interaction => {
           save_private();
           return await interaction.reply({embeds: [make_bank_message(gtsf("bank-changestatus.success", lng, []), lng)]});
         } else {
-          return await interaction.reply({embeds: [make_bank_message(gtsf("bank-changestatus.money", lng, [settings.bank.currency]), lng)]});
+          return await interaction.reply({embeds: [make_bank_message(gtsf("bank-changestatus.money", lng, [getCurrency(lng)]), lng)]});
         }
       } else {
         sprivate.bank.players[libbank.get_bank_account(id, 1).counter][7] = status;
@@ -511,7 +516,7 @@ client.on('interactionCreate', async interaction => {
         b.player_object[1],
         b.player_object[0],
         b.player_object[3],
-        settings.bank.currency,
+        getCurrency(lng),
         libbank.count_linked(b.player_object[4]) - 1,
         (typeof b.player_object[9] == "undefined") ? gtsf("bank.account.not-converted", lng, []) : ((b.player_object[9].toString().length == 0) ? gtsf("bank.account.messages.not-exists", lng, []) : b.player_object[9].toString()),
         (typeof b.player_object[10] == "undefined") ? gtsf("bank.account.not-converted", lng, []) : b.player_object[10],
@@ -544,7 +549,7 @@ client.on('interactionCreate', async interaction => {
           sprivate.bank.ncoin.history.push(sprivate.bank.ncoin.value);
           sprivate.bank.players[libbank.get_bank_account(id1, 1).counter][10] = Date();
           save_private();
-          await interaction.reply({embeds: [make_bank_message(gtsf("bank-changebalance.set.success", lng, [value, settings.bank.currency, id1]), lng)]});
+          await interaction.reply({embeds: [make_bank_message(gtsf("bank-changebalance.set.success", lng, [value, getCurrency(lng), id1]), lng)]});
           break;
         }
         case "add": {
@@ -557,7 +562,7 @@ client.on('interactionCreate', async interaction => {
           sprivate.bank.ncoin.history.push(sprivate.bank.ncoin.value);
           sprivate.bank.players[libbank.get_bank_account(id1, 1).counter][10] = Date();
           save_private();
-          await interaction.reply({embeds: [make_bank_message(gtsf("bank-changebalance.add.success", lng, [value, settings.bank.currency, id1]), lng)]});
+          await interaction.reply({embeds: [make_bank_message(gtsf("bank-changebalance.add.success", lng, [value, getCurrency(lng), id1]), lng)]});
           break;
         }
         case "remove": {
@@ -578,7 +583,7 @@ client.on('interactionCreate', async interaction => {
               sprivate.bank.players[libbank.get_bank_account(id1, 1).counter][10] = Date();
               sprivate.bank.players[libbank.get_bank_account(id2, 1).counter][10] = sprivate.bank.players[libbank.get_bank_account(id2, 1).counter][10];
               save_private();
-              await interaction.reply({embeds: [make_bank_message(gtsf("bank-changebalance.remove.success", lng, [value, settings.bank.currency, id1]), lng)]});
+              await interaction.reply({embeds: [make_bank_message(gtsf("bank-changebalance.remove.success", lng, [value, getCurrency(lng), id1]), lng)]});
             } else {
               await interaction.reply({embeds: [make_bank_message(gtsf("bank.account.access-denied", lng, []), lng)]});
             }

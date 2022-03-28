@@ -358,7 +358,10 @@
 	"debugger": false,
 	"backup_bot": true,
 	"bank": {
-		"currency": "Мембрана фантома",
+		"currency": {
+			"ru": "Мембрана фантома",
+			"en": "Phantom Membrane"
+		},
 		"version": "1.0"
 	},
 	"benLookupTable": ["No", "Be-be", "Ho-ho-ho", "Yes"]
