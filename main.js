@@ -69,7 +69,7 @@ var gtsf = (s = "", l = "", f = ["", 0, true]) => {
   return result;
 }
 var getCurrency = (lang = "") => {
-  if(!Object.keys(settings.bank.currency).includes(l)) return "Error\nUnable to **find translation** provided **by `lang` argument**";
+  if(!Object.keys(settings.bank.currency).includes(lang)) return "Error\nUnable to **find translation** provided **by `lang` argument**";
   
   return settings.bank.currency[lang];
 }
