@@ -1,11 +1,8 @@
 {
   "name": "botn",
   "version": "1.0.0",
-  "description": "bot for server",
+  "description": "Norches Bot",
   "main": "main.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "author": "SergeyMC9730",
   "license": "ISC",
   "dependencies": {

@@ -356,7 +356,6 @@
 	"print_appid": false,
 	"scheduler": true,
 	"debugger": false,
-	"backup_bot": true,
 	"bank": {
 		"currency": {
 			"ru": "Мембрана фантома",

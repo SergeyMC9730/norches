@@ -1,5 +1,5 @@
 {
-    "additional": ["ru"],
+    "additional": ["ru", "en"],
     "ru": {
         "header.bank": "Банк",
 
