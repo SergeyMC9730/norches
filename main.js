@@ -32,18 +32,24 @@ if(settings.print_appid) console.log("app id: %s", clientid);
 var rest = new REST({ version: '9' }).setToken(token);
 
 if (!fs.existsSync("private.json")) {
-  fs.writeFileSync("private.json", JSON.stringify({ guilds: [], bank: { ncoin: { value: 0, history: [] }, players: [], timers: [] }, xp: { users: [], data: [] }, server: {WebSocketIP: "", WebSocketPort: 0} }));
+  fs.writeFileSync("private.json", JSON.stringify({ guilds: [], bank: { ncoin: { value: 0, history: [] }, players: [], timers: [] }, xp: { users: [], data: [] }, server: {WebSocketIP: "", WebSocketPort: 0}, blocklist: [], private_revision: settings.private_revision }));
   console.log("private.json was made. Please, configure it.");
   process.exit(0);
 }
 
-var libbank = require("./bank")
+var libbank = require("./bank");
 
 var sprivate = JSON.parse(fs.readFileSync("private.json").toString("utf8"));
+if(!Object.keys(sprivate).includes("private_revision")) {
+  console.log("Updating private data...");
+  fs.writeFileSync("private.json", JSON.stringify({ guilds: sprivate.guilds, bank: sprivate.bank, players: sprivate.players, timers: sprivate.timers, xp: sprivate.xp, server: sprivate.server, blocklist: [], private_revision: settings.private_revision }));
+  sprivate = JSON.parse(fs.readFileSync("private.json").toString("utf8"));
+}
 var isOpen = false;
 var serverSocketConnection;
 var latestSocketData = "";
 var latestRequest = "";
+var serverOnMessageTrigger = false;
 
 var kazna = 2108;
 var roles = {
@@ -104,6 +110,7 @@ try {
       } else {
         latestSocketData = data.toString();
       }
+      serverOnMessageTrigger = true;
     })
   }
 } catch (e) {
@@ -224,6 +231,12 @@ client.on('ready', () => {
 //norches-info - Everyone
 //norches-ben - Everyone
 
+var command_list = [];
+
+settings.commands.forEach((cmd) => {
+  command_list.push(cmd.name);
+});
+
 setInterval(() => {
   if(!settings.scheduler) return;
   read_private();
@@ -307,6 +320,13 @@ var roleCheck = (rid, rc) => {return rc.some(role => role.id == rid);}
 
 client.on('interactionCreate', async interaction => {
   if (!interaction.isCommand()) return;
+
+  if (command_list.includes(interaction.commandName) && sprivate.blockList.includes(interaction.user.id)) {
+    return await interaction.reply({
+      embeds: [make_norches_message("+ratio")],
+      ephemeral: true
+    });
+  }
 
   var user_roles = interaction.member.roles.cache;
   var lng = "en";

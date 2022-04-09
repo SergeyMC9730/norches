@@ -363,5 +363,6 @@
 		},
 		"version": "1.0"
 	},
+	"private_revision": 1,
 	"benLookupTable": ["No", "Be-be", "Ho-ho-ho", "Yes"]
 }
