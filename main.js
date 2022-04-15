@@ -45,7 +45,7 @@ if(!Object.keys(sprivate).includes("private_revision")) {
   fs.writeFileSync("private.json", JSON.stringify({ guilds: sprivate.guilds, bank: sprivate.bank, players: sprivate.players, timers: sprivate.timers, xp: sprivate.xp, server: sprivate.server, blocklist: [], private_revision: settings.private_revision }));
   sprivate = JSON.parse(fs.readFileSync("private.json").toString("utf8"));
 } else if (sprivate.private_revision != settings.private_revision) {
-  //update soon
+  console.log("Private Revision: %d", sprivate.private_revision)
   switch(sprivate.private_revision) {
     case 1: {
       sprivate.private_revision = settings.private_revision;
@@ -161,9 +161,10 @@ var lightinglevel = {
 };
 
 var update_commands = () => {
-  sprivate.guilds.forEach(function (g) {
+  sprivate.guilds.forEach((g) => {
     if (g !== "removed") {
       try {
+        console.log("Updating on %s", g.id);
         rest.put(Routes.applicationGuildCommands(clientid, g.id), { body: settings.commands });
       } catch (err) {
         console.error(err);
