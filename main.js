@@ -44,12 +44,31 @@ if(!Object.keys(sprivate).includes("private_revision")) {
   console.log("Updating private data...");
   fs.writeFileSync("private.json", JSON.stringify({ guilds: sprivate.guilds, bank: sprivate.bank, players: sprivate.players, timers: sprivate.timers, xp: sprivate.xp, server: sprivate.server, blocklist: [], private_revision: settings.private_revision }));
   sprivate = JSON.parse(fs.readFileSync("private.json").toString("utf8"));
+} else if (sprivate.private_revision != settings.private_revision) {
+  //update soon
+  switch(sprivate.private_revision) {
+    case 1: {
+      sprivate.private_revision = settings.private_revision;
+      var guild_data = [];
+      sprivate.guilds.forEach((gld) => {
+        if(gld == "927851863146102804") {
+          guild_data.push({id: gld, foreign: false});
+        } else {
+          guild_data.push({id: gld, foreign: true});
+        }
+      });
+      fs.writeFileSync("private.json", JSON.stringify({ guilds: guild_data, bank: sprivate.bank, players: sprivate.players, timers: sprivate.timers, xp: sprivate.xp, server: sprivate.server, blocklist: sprivate.blocklist, private_revision: settings.private_revision }));
+      break;
+    }
+    case settings.private_revision: {
+      console.log("Already updated!");
+    }
+  }
 }
 var isOpen = false;
 var serverSocketConnection;
 var latestSocketData = "";
 var latestRequest = "";
-var serverOnMessageTrigger = false;
 
 var kazna = 2108;
 var roles = {
@@ -67,7 +86,7 @@ var gtsf = (s = "", l = "", f = ["", 0, true]) => {
   var updlist = [];
   f.forEach((ff) => {
     updlist.push(`"${ff}"`);
-  })
+  });
   if(!Object.keys(langlist).includes(l)) return "Error\nUnable to **find translation** provided **by `l` argument**";
   if(!Object.keys(langlist[l]).includes(s)) return "Error\nUnable to **find string** provided **by `s` argument**";
   var result = "";
@@ -145,7 +164,7 @@ var update_commands = () => {
   sprivate.guilds.forEach(function (g) {
     if (g !== "removed") {
       try {
-        rest.put(Routes.applicationGuildCommands(clientid, g), { body: settings.commands });
+        rest.put(Routes.applicationGuildCommands(clientid, g.id), { body: settings.commands });
       } catch (err) {
         console.error(err);
       }
@@ -321,7 +340,7 @@ var roleCheck = (rid, rc) => {return rc.some(role => role.id == rid);}
 client.on('interactionCreate', async interaction => {
   if (!interaction.isCommand()) return;
 
-  if (command_list.includes(interaction.commandName) && sprivate.blockList.includes(interaction.user.id)) {
+  if (command_list.includes(interaction.commandName) && sprivate.blocklist.includes(interaction.user.id)) {
     return await interaction.reply({
       embeds: [make_norches_message("+ratio")],
       ephemeral: true
@@ -424,6 +443,8 @@ client.on('interactionCreate', async interaction => {
     return await interaction.reply({embeds: [make_norches_message(blt_res)], ephemeral: true});
   }
   if (interaction.commandName === "bank-createaccount") {
+    if(interaction.guild.id != "927851863146102804") return await interaction.reply({embeds: [make_norches_message("**Ошибка!**\nЗа пределами сервера разрешены **лишь команды без возможности записи данных**, чтобы не допустить *несанкционированного доступа к данным приватного сервера!*")]});
+
     if(!roleCheck(roles.bank.base, user_roles)){
       return await interaction.reply({embeds: [make_norches_message(gtsf("norches.access-denied", lng, []), lng)]});
     }
@@ -459,6 +480,8 @@ client.on('interactionCreate', async interaction => {
     }
   }
   if (interaction.commandName === "bank-changestatus") {
+    if(interaction.guild.id != "927851863146102804") return await interaction.reply({embeds: [make_norches_message("**Ошибка!**\nЗа пределами сервера разрешены **лишь команды без возможности записи данных**, чтобы не допустить *несанкционированного доступа к данным приватного сервера!*")]});
+
     if(!roleCheck(roles.player, user_roles)){
       return await interaction.reply({embeds: [make_bank_message(gtsf("norches.access-denied", lng, []), lng)]}); 
     }
@@ -496,6 +519,8 @@ client.on('interactionCreate', async interaction => {
     }
   }
   if(interaction.commandName === "bank-changelang"){
+    if(interaction.guild.id != "927851863146102804") return await interaction.reply({embeds: [make_norches_message("**Ошибка!**\nЗа пределами сервера разрешены **лишь команды без возможности записи данных**, чтобы не допустить *несанкционированного доступа к данным приватного сервера!*")]});
+
     var user = interaction.user;
     var lang = interaction.options.getString("lang", true);
     if(!libbank.get_bank_account(user.id, 0).is_valid){
@@ -510,7 +535,10 @@ client.on('interactionCreate', async interaction => {
     save_private();
     return await interaction.reply({embeds: [make_bank_message(gtsf("bank-changelang.success", lang, []), lang)]});
   }
+
   if(interaction.commandName === "bank-convert") {
+    if(interaction.guild.id != "927851863146102804") return await interaction.reply({embeds: [make_norches_message("**Ошибка!**\nЗа пределами сервера разрешены **лишь команды без возможности записи данных**, чтобы не допустить *несанкционированного доступа к данным приватного сервера!*")]});
+
     var user = interaction.options.getUser("user", false);
     if(user != null){
       if(!roleCheck(roles.bank.base, user_roles)){
@@ -590,6 +618,8 @@ client.on('interactionCreate', async interaction => {
     }
   }
   if (interaction.commandName === "bank-changebalance") {
+    if(interaction.guild.id != "927851863146102804") return await interaction.reply({embeds: [make_norches_message("**Ошибка!**\nЗа пределами сервера разрешены **лишь команды без возможности записи данных**, чтобы не допустить *несанкционированного доступа к данным приватного сервера!*")]});
+
     read_private();
     var id1 = interaction.user.id;
     var id2 = interaction.options.getString("id2rem", true);
@@ -657,56 +687,62 @@ client.on('interactionCreate', async interaction => {
     }
   }
   if (interaction.commandName === "bank-schedule") {
-    if(!roleCheck(roles.bank.base, user_roles) || !roleCheck(roles.police, user_roles)){
+    if(interaction.guild.id != "927851863146102804") return await interaction.reply({embeds: [make_norches_message("**Ошибка!**\nЗа пределами сервера разрешены **лишь команды без возможности записи данных**, чтобы не допустить *несанкционированного доступа к данным приватного сервера!*")]});
+
+    if(roleCheck(roles.bank.base, user_roles) || roleCheck(roles.police, user_roles)){
+      var user = interaction.options.getUser("user", true);
+      var action = interaction.options.getString("action", true);
+      var value = interaction.options.getInteger("value", true);
+      var id2 = interaction.options.getString("id2", true);
+      var status = interaction.options.getString("status", true);
+      var warn_message = interaction.options.getString("warn-message", true);
+      var minutes = interaction.options.getInteger("minutes", true);
+      if(user.id == interaction.user.id){
+        return await interaction.reply({embeds: [make_bank_message(gtsf("bank-schedule.error.myself", lng, []), lng)]});
+      }
+
+      read_private();
+      if(!libbank.get_bank_account(user.id, 0).is_valid) {
+        return await interaction.reply({embeds: [make_bank_message(gtsf("bank.account.doesnotexists", lng, []), lng)]});
+      }
+      //{ guilds: [], bank: { ncoin: { value: 0, history: [] }, players: [], timers: [] }, xp: { users: [], data: [] }, server: {WebSocketIP: "", WebSocketPort: 0} }
+      var t = Date.now();
+      var sid = sprivate.bank.timers.push({
+        start_time: t,
+        end_time: t += (minutes * 60 * 1000),
+        action: action,
+        id: id2,
+        warn_message: warn_message,
+        arguments: [user.id, value]
+      });
+      //structure of timer
+      //{start_time: unix_time, end_time: unix_time, action: string, id: number, warn_message: string, arguments: []}
+      save_private();
+      await interaction.reply({embeds: [make_bank_message("bank-schedule.success", lng, [sid])]});
+    } else {
       return await interaction.reply({embeds: [make_bank_message(gtsf("norches.access-denied", lng, []), lng)]}); 
     }
-
-    var user = interaction.options.getUser("user", true);
-    var action = interaction.options.getString("action", true);
-    var value = interaction.options.getInteger("value", true);
-    var id2 = interaction.options.getString("id2", true);
-    var status = interaction.options.getString("status", true);
-    var warn_message = interaction.options.getString("warn-message", true);
-    var minutes = interaction.options.getInteger("minutes", true);
-    if(user.id == interaction.user.id){
-      return await interaction.reply({embeds: [make_bank_message(gtsf("bank-schedule.error.myself", lng, []), lng)]});
-    }
-
-    read_private();
-    if(!libbank.get_bank_account(user.id, 0).is_valid) {
-      return await interaction.reply({embeds: [make_bank_message(gtsf("bank.account.doesnotexists", lng, []), lng)]});
-    }
-    //{ guilds: [], bank: { ncoin: { value: 0, history: [] }, players: [], timers: [] }, xp: { users: [], data: [] }, server: {WebSocketIP: "", WebSocketPort: 0} }
-    var t = Date.now();
-    var sid = sprivate.bank.timers.push({
-      start_time: t,
-      end_time: t += (minutes * 60 * 1000),
-      action: action,
-      id: id2,
-      warn_message: warn_message,
-      arguments: [user.id, value]
-    });
-    //structure of timer
-    //{start_time: unix_time, end_time: unix_time, action: string, id: number, warn_message: string, arguments: []}
-    save_private();
-    await interaction.reply({embeds: [make_bank_message("bank-schedule.success", lng, [sid])]});
   }
   if (interaction.commandName === "bank-unschedule") {
-    if(!roleCheck(roles.bank.base, user_roles) || !roleCheck(roles.police, user_roles)){
-      return await interaction.reply({embeds: [make_bank_message(gtsf("norches.access-denied", lng, []), lng)]}); 
-    }
+    if(interaction.guild.id != "927851863146102804") return await interaction.reply({embeds: [make_norches_message("**Ошибка!**\nЗа пределами сервера разрешены **лишь команды без возможности записи данных**, чтобы не допустить *несанкционированного доступа к данным приватного сервера!*")]});
 
-    var id = interaction.options.getInteger("id", true);
-    read_private();
-    if(typeof sprivate.bank.timers[id - 1] == "undefined" || sprivate.bank.timers[id - 1] == null){
-      await interaction.reply({embeds: [make_bank_message(gtsf("bank-unschedule.error", lng, []), lng)]});
+    if(roleCheck(roles.bank.base, user_roles) || roleCheck(roles.police, user_roles)){
+      var id = interaction.options.getInteger("id", true);
+      read_private();
+      if(typeof sprivate.bank.timers[id - 1] == "undefined" || sprivate.bank.timers[id - 1] == null){
+        await interaction.reply({embeds: [make_bank_message(gtsf("bank-unschedule.error", lng, []), lng)]});
+      } else {
+        sprivate.bank.timers[id - 1] = null;
+        save_private();
+        await interaction.reply({embeds: [make_bank_message(gtsf("bank-unschedule.success", lng, []), lng)]});
+      }
     } else {
-      sprivate.bank.timers[id - 1] = null;
-      save_private();
-      await interaction.reply({embeds: [make_bank_message(gtsf("bank-unschedule.success", lng, []), lng)]});
+      return await interaction.reply({embeds: [make_bank_message(gtsf("norches.access-denied", lng, []), lng)]}); 
     }
   }
   if (interaction.commandName === "bank-link"){
+    if(interaction.guild.id != "927851863146102804") return await interaction.reply({embeds: [make_norches_message("**Ошибка!**\nЗа пределами сервера разрешены **лишь команды без возможности записи данных**, чтобы не допустить *несанкционированного доступа к данным приватного сервера!*")]});
+
     if(!roleCheck(roles.player, user_roles)){
       return await interaction.reply({embeds: [make_bank_message(gtsf("norches.access-denied", lng, []), lng)]}); 
     }
@@ -733,6 +769,8 @@ client.on('interactionCreate', async interaction => {
     }
   }
   if(interaction.commandName === "bank-unlink"){
+    if(interaction.guild.id != "927851863146102804") return await interaction.reply({embeds: [make_norches_message("**Ошибка!**\nЗа пределами сервера разрешены **лишь команды без возможности записи данных**, чтобы не допустить *несанкционированного доступа к данным приватного сервера!*")]});
+
     if(!roleCheck(roles.player, user_roles)){
       return await interaction.reply({embeds: [make_bank_message(gtsf("norches.access-denied", lng, []), lng)]}); 
     }
@@ -806,6 +844,8 @@ client.on('interactionCreate', async interaction => {
     }
   }
   if (interaction.commandName === "bank-deleteaccount") {
+    if(interaction.guild.id != "927851863146102804") return await interaction.reply({embeds: [make_norches_message("**Ошибка!**\nЗа пределами сервера разрешены **лишь команды без возможности записи данных**, чтобы не допустить *несанкционированного доступа к данным приватного сервера!*")]});
+
     if(!roleCheck(roles.player, user_roles)){
       return await interaction.reply({embeds: [make_bank_message(gtsf("norches.access-denied", lng, []), lng)]}); 
     }
