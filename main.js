@@ -439,7 +439,7 @@ client.on('interactionCreate', async interaction => {
     return await interaction.reply("https://www.youtube.com/watch?v=dQw4w9WgXcQ", {ephemeral: true});
   }
   if (interaction.commandName === "norches-ben") {
-    var blt_res = settings.benLookupTable[Math.round(Math.random() * 256) % 4];
+    var blt_res = settings.benLookupTable[Math.round(Math.random() * 256) % 5];
     return await interaction.reply({embeds: [make_norches_message(blt_res)], ephemeral: true});
   }
   if (interaction.commandName === "bank-createaccount") {
