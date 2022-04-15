@@ -50,7 +50,7 @@ public class SocketConnection extends WebSocketServer {
             case "tps": {
                 //connection.send("" + plugin.getServer())
                 plugin.tps.update();
-                connection.send("" + plugin.tps.tps);
+                connection.send("" + plugin.lag.getTPS());
                 break;
             }
             case "list": {

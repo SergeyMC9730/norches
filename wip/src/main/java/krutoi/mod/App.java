@@ -27,6 +27,7 @@ public class App extends JavaPlugin implements Listener {
 
     public SocketConnection current;
     public TPS tps;
+    public Lag lag;
     public boolean isNorchesBuild = true;
     public short port = 25710;
     public Tools tools;
@@ -39,9 +40,8 @@ public class App extends JavaPlugin implements Listener {
         current.plugin = this;
         tools = new Tools();
         tools.plugin = this;
-        tps = new TPS();
-        tps.plugin = this;
-        tps.init();
+        Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, lag, 100L, 1L);
+
         current.start();
         playerCheckTask = tools.createTimer(new Runnable() {
             @Override
@@ -64,7 +64,7 @@ public class App extends JavaPlugin implements Listener {
                 }
             }
         }, 20);
-        getLogger().info("Turned on.");
+        getLogger().info("Loading complete.");
     }
 
     @Override
@@ -87,6 +87,8 @@ public class App extends JavaPlugin implements Listener {
     public void onPlayerJoin(PlayerJoinEvent p){
         if(isNorchesBuild){
             p.setJoinMessage(String.format(new ColorFormatter().colorFormat("Добро пожаловать на <cy>Norches<r>, <clp>%s<r>!"), p.getPlayer().getName()));
+        } else {
+            p.setJoinMessage(String.format(new ColorFormatter().colorFormat("Добро пожаловать на сервер, <clp>%s<r>!"), p.getPlayer().getName()));
         }
         p.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, tools.getTicks(20), 2, false, false));
     }
