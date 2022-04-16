@@ -48,8 +48,6 @@ public class SocketConnection extends WebSocketServer {
     public void onMessage(WebSocket connection, String message){
         switch (message){
             case "tps": {
-                //connection.send("" + plugin.getServer())
-                plugin.tps.update();
                 connection.send("" + plugin.lag.getTPS());
                 break;
             }
