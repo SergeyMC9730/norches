@@ -103,7 +103,7 @@ var securityLayerKey = "";
 
 try {
   serverSocketConnection = new ws(`${sprivate.server.WebSocketIP}:${sprivate.server.WebSocketPort}`);
-  if(typeof serverSocketConnection != "undefined"){
+  if(serverSocketConnection != undefined || serverSocketConnection != null){
     serverSocketConnection.on('open', (ws) => {
       isOpen = true;
       securityLayerKey = randomUUID();
@@ -115,7 +115,7 @@ try {
     })
     serverSocketConnection.on('error', (ws, err) => {
       isOpen = false;
-      console.log("Unable to connect to the server");
+      console.log("Unable to connect to the server: %s", err);
       return;
     })
     serverSocketConnection.on("close", (ws, code, reason) => {
@@ -131,6 +131,8 @@ try {
       }
       serverOnMessageTrigger = true;
     })
+  } else {
+    console.log("Unable to connect to the server");
   }
 } catch (e) {
   console.log("Unable to connect to the server: %s", e);
