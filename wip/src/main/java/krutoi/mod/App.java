@@ -31,7 +31,7 @@ public class App extends JavaPlugin implements Listener {
     public boolean isNorchesBuild = true;
     public short port = 25710;
     public Tools tools;
-    public BukkitTask playerCheckTask = null;
+    public BukkitTask playerCheckTask;
 
     @Override
     public void onEnable(){
@@ -39,6 +39,7 @@ public class App extends JavaPlugin implements Listener {
         current = new SocketConnection(new InetSocketAddress("0.0.0.0", (int)port));
         current.plugin = this;
         tools = new Tools();
+        lag = new Lag();
         tools.plugin = this;
         Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, lag, 100L, 1L);
 
@@ -70,17 +71,12 @@ public class App extends JavaPlugin implements Listener {
     @Override
     public void onDisable(){
         try {
-            if(current != null){
-                current.stop();
-            }
-            playerCheckTask.cancel();
-            tps.a.cancel();
-            tps.b.cancel();
-            
+            if(current != null) current.stop();
+            if(playerCheckTask != null) playerCheckTask.cancel();
+            getLogger().info("Turned off.");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        getLogger().info("Turned off.");
     }
 
     @EventHandler
