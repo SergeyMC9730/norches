@@ -107,7 +107,7 @@ try {
     serverSocketConnection.on('open', (ws) => {
       isOpen = true;
       securityLayerKey = randomUUID();
-      ws.send(JSON.stringify({
+      serverSocketConnection.send(JSON.stringify({
         "type": "sendKey",
         "userKey": securityLayerKey
       }))
