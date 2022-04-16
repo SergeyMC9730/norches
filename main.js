@@ -427,9 +427,8 @@ client.on('interactionCreate', async interaction => {
         sprivate.bank.ncoin.value,
         icon,
         sprivate.bank.players.length,
-        settings.bank.version,
-        render
-      ]), lng)]});
+        settings.bank.version
+      ]) + render, lng)]});
     }
   }
 
