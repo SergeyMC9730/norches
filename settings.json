@@ -363,6 +363,7 @@
 		},
 		"version": "1.0"
 	},
-	"private_revision": 2,
-	"benLookupTable": ["No", "Ewwww", "Be-be", "Ho-ho-ho", "Yes"]
+	"private_revision": 3,
+	"benLookupTable": ["No", "Ewwww", "Be-be", "Ho-ho-ho", "Yes"],
+	"custom_guilds": false
 }

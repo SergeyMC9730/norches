@@ -48,7 +48,6 @@ if(!Object.keys(sprivate).includes("private_revision")) {
   console.log("Private Revision: %d", sprivate.private_revision)
   switch(sprivate.private_revision) {
     case 1: {
-      sprivate.private_revision = settings.private_revision;
       var guild_data = [];
       sprivate.guilds.forEach((gld) => {
         if(gld == "927851863146102804") {
@@ -58,6 +57,10 @@ if(!Object.keys(sprivate).includes("private_revision")) {
         }
       });
       fs.writeFileSync("private.json", JSON.stringify({ guilds: guild_data, bank: sprivate.bank, players: sprivate.players, timers: sprivate.timers, xp: sprivate.xp, server: sprivate.server, blocklist: sprivate.blocklist, private_revision: settings.private_revision }));
+      break;
+    }
+    case 2: {
+      fs.writeFileSync("private.json", JSON.stringify({ guilds: guild_data, bank: sprivate.bank, players: sprivate.players, timers: sprivate.timers, xp: sprivate.xp, server: sprivate.server, blocklist: sprivate.blocklist, custom_guilds: [], private_revision: settings.private_revision }));
       break;
     }
     case settings.private_revision: {
@@ -163,16 +166,29 @@ var lightinglevel = {
 };
 
 var update_commands = () => {
-  sprivate.guilds.forEach((g) => {
-    if (g !== "removed") {
-      try {
-        console.log("Updating on %s", g.id);
-        rest.put(Routes.applicationGuildCommands(clientid, g.id), { body: settings.commands });
-      } catch (err) {
-        console.error(err);
+  if(settings.custom_guilds) {
+    sprivate.custom_guilds.forEach((g) => {
+      if (g !== "removed") {
+        try {
+          console.log("Updating on %s (CUSTOM)", g.id);
+          rest.put(Routes.applicationGuildCommands(clientid, g.id), { body: settings.commands });
+        } catch (err) {
+          console.error(err);
+        }
       }
-    }
-  });
+    })
+  } else {
+    sprivate.guilds.forEach((g) => {
+      if (g !== "removed") {
+        try {
+          console.log("Updating on %s", g.id);
+          rest.put(Routes.applicationGuildCommands(clientid, g.id), { body: settings.commands });
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    });
+  }
 }
 
 update_commands();
@@ -442,7 +458,7 @@ client.on('interactionCreate', async interaction => {
   }
   if (interaction.commandName === "norches-ben") {
     var blt_res = settings.benLookupTable[Math.round(Math.random() * 256) % 5];
-    return await interaction.reply({embeds: [make_norches_message(blt_res)], ephemeral: true});
+    return await interaction.reply({embeds: [make_norches_message(blt_res)], ephemeral: false});
   }
   if (interaction.commandName === "bank-createaccount") {
     if(interaction.guild.id != "927851863146102804") return await interaction.reply({embeds: [make_norches_message("**Ошибка!**\nЗа пределами сервера разрешены **лишь команды без возможности записи данных**, чтобы не допустить *несанкционированного доступа к данным приватного сервера!*")]});
