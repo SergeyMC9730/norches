@@ -395,8 +395,48 @@ var command_set = {
         return await interaction.reply({embeds: [make_bank_message(gtsf("bank-changestatus.success", lng, []), lng)]});
       }
     }
+  },
+  "bank-createaccount": async (interaction) => {
+    if(interaction.guild.id != "927851863146102804") return await interaction.reply({embeds: [make_norches_message("**Ошибка!**\nЗа пределами сервера разрешены **лишь команды без возможности записи данных**, чтобы не допустить *несанкционированного доступа к данным приватного сервера!*")]});
+
+    if(!roleCheck(roles.bank.base, user_roles)){
+      return await interaction.reply({embeds: [make_norches_message(gtsf("norches.access-denied", lng, []), lng)]});
+    }
+
+    var user = interaction.options.getUser('user');
+    var nick = interaction.options.getString('nick');
+    var name = interaction.options.getString('name');
+    var id = Math.round(Math.random() * 8192);
+    if(libbank.get_bank_account(user.id).is_valid == false || libbank.get_bank_account(user.id).player_object[6] == false) {
+
+
+      // 0 - discord id
+      // 1 - mc nickname
+      // 2 - account name
+      // 3 - balance
+      // 4 - linked bank and discord ids (only supports Professional account)
+      // 5 - placeholder
+      // 6 - is account has not been suspended?
+      // 7 - account type
+      // 8 - account version
+      // 9 - messages
+      //10 - last activity
+      //11 - default language
+      sprivate.bank.players.push([user.id, nick, name, 0, [{bid: `${id}`, did: user.id}], null, true, "personal", settings.bank.version, [], Date(), "en"]);
+      save_private();
+      if(interaction.user.id == user.id){ 
+        await interaction.reply({embeds: [make_bank_message(gtsf("bank-createaccount.own.success", lng, [id]), lng)]}); 
+      } else {
+        await interaction.reply({embeds: [make_bank_message(gtsf("bank-createaccount.success", lng, [id]), lng)]}); 
+      }
+    } else {
+      await interaction.reply({embeds: [make_bank_message(gtsf("bank-createaccount.exists", lng, []), lng)]}); 
+    }
   }
 };
+
+var user_roles;
+var lng;
 
 client.on('interactionCreate', async interaction => {
   if (!interaction.isCommand()) return;
@@ -408,8 +448,8 @@ client.on('interactionCreate', async interaction => {
     });
   }
 
-  var user_roles = interaction.member.roles.cache;
-  var lng = "en";
+  user_roles = interaction.member.roles.cache;
+  lng = "en";
   if(libbank.get_bank_account(interaction.user.id, 0).is_valid && libbank.get_bank_account(interaction.user.id, 0).player_object[8] == "1.0") lng = libbank.get_bank_account(interaction.user.id, 0).player_object[11];
 
   if(settings.debugger){
@@ -503,41 +543,7 @@ client.on('interactionCreate', async interaction => {
     return await interaction.reply({embeds: [make_norches_message(blt_res)], ephemeral: false});
   }
   if (interaction.commandName === "bank-createaccount") {
-    if(interaction.guild.id != "927851863146102804") return await interaction.reply({embeds: [make_norches_message("**Ошибка!**\nЗа пределами сервера разрешены **лишь команды без возможности записи данных**, чтобы не допустить *несанкционированного доступа к данным приватного сервера!*")]});
-
-    if(!roleCheck(roles.bank.base, user_roles)){
-      return await interaction.reply({embeds: [make_norches_message(gtsf("norches.access-denied", lng, []), lng)]});
-    }
-
-    var user = interaction.options.getUser('user');
-    var nick = interaction.options.getString('nick');
-    var name = interaction.options.getString('name');
-    var id = Math.round(Math.random() * 8192);
-    if(libbank.get_bank_account(user.id).is_valid == false || libbank.get_bank_account(user.id).player_object[6] == false) {
-
-
-      // 0 - discord id
-      // 1 - mc nickname
-      // 2 - account name
-      // 3 - balance
-      // 4 - linked bank and discord ids (only supports Professional account)
-      // 5 - placeholder
-      // 6 - is account has not been suspended?
-      // 7 - account type
-      // 8 - account version
-      // 9 - messages
-      //10 - last activity
-      //11 - default language
-      sprivate.bank.players.push([user.id, nick, name, 0, [{bid: `${id}`, did: user.id}], null, true, "personal", settings.bank.version, [], Date(), "en"]);
-      save_private();
-      if(interaction.user.id == user.id){ 
-        await interaction.reply({embeds: [make_bank_message(gtsf("bank-createaccount.own.success", lng, [id]), lng)]}); 
-      } else {
-        await interaction.reply({embeds: [make_bank_message(gtsf("bank-createaccount.success", lng, [id]), lng)]}); 
-      }
-    } else {
-      await interaction.reply({embeds: [make_bank_message(gtsf("bank-createaccount.exists", lng, []), lng)]}); 
-    }
+    command_set["bank-createaccount"](interaction);
   }
   if (interaction.commandName === "bank-changestatus") {
     command_set["bank-changestatus"](interaction);
