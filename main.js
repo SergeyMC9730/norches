@@ -357,7 +357,7 @@ setInterval(() => {
 var roleCheck = (rid, rc) => {return rc.some(role => role.id == rid);}
 
 var command_set = {
-  "bank-changestatus": (interaction) => {
+  "bank-changestatus": async (interaction) => {
     if(interaction.guild.id != "927851863146102804") return await interaction.reply({embeds: [make_norches_message("**Ошибка!**\nЗа пределами сервера разрешены **лишь команды без возможности записи данных**, чтобы не допустить *несанкционированного доступа к данным приватного сервера!*")]});
 
     if(!roleCheck(roles.player, user_roles)){
