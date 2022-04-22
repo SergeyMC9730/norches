@@ -231,8 +231,12 @@
 			"description": "Reset bank database"
 		},
 		{
+			"name": "norches-patch",
+			"description": "Patches code in realtime (patch.json => patch.js)"
+		},
+		{
 			"name": "bank-convert",
-			"description": "Convert account to new format",
+			"description": "Converts account to new format",
 			"options": [
 				{
 					"type": 6,
@@ -363,7 +367,7 @@
 		},
 		"version": "1.0"
 	},
-	"private_revision": 3,
+	"private_revision": 4,
 	"benLookupTable": ["No", "Ewwww", "Be-be", "Ho-ho-ho", "Yes"],
 	"custom_guilds": false
 }
