@@ -99,7 +99,7 @@ public class SocketConnection extends WebSocketServer {
                                             p.damage(5);
                                             break;
                                         }
-                                        case 4: { //летучие мыши
+                                        case 4: { //bats
                                             //TODO Make it later
                                             break;
                                         }
