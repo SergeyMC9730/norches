@@ -63,13 +63,18 @@ if(!Object.keys(sprivate).includes("private_revision")) {
       break;
     }
     case 3: {
-      fs.writeFileSync("private.json", JSON.stringify({ guilds: [], bank: sprivate.bank, players: sprivate.players, timers: sprivate.timers, xp: sprivate.xp, server: sprivate.server, blocklist: sprivate.blocklist, custom_guilds: [], private_revision: settings.private_revision }));
+      fs.writeFileSync("private.json", JSON.stringify({ guilds: sprivate.guilds, bank: sprivate.bank, players: sprivate.players, timers: sprivate.timers, xp: sprivate.xp, server: sprivate.server, blocklist: sprivate.blocklist, custom_guilds: sprivate.custom_guilds, private_revision: settings.private_revision }));
+      break;
+    }
+    case 4: {
+      fs.writeFileSync("private.json", JSON.stringify({ guilds: sprivate.guilds, bank: sprivate.bank, players: sprivate.players, timers: sprivate.timers, xp: sprivate.xp, server: sprivate.server, blocklist: sprivate.blocklist, custom_guilds: custom_guilds, login_codes: [], private_revision: settings.private_revision }));
       break;
     }
     case settings.private_revision: {
       console.log("Already updated!");
     }
   }
+  console.log("Successfully updated!");
 }
 var isOpen = false;
 var serverSocketConnection;

@@ -139,6 +139,22 @@
 			]
 		},
 		{
+			"name": "norches-login",
+			"description": "Logins user using 4-digit code",
+			"options": [
+				{
+					"type": 4,
+					"name": "code",
+					"description": "4-digit code",
+					"required": true
+				}
+			]	
+		},
+		{
+			"name": "norches-generate-code",
+			"description": "Generates 4-digit code"
+		},
+		{
 			"name": "bank-schedule",
 			"description": "Schedule action for bank account",
 			"options": [
@@ -367,7 +383,7 @@
 		},
 		"version": "1.0"
 	},
-	"private_revision": 4,
+	"private_revision": 5,
 	"benLookupTable": ["No", "Ewwww", "Be-be", "Ho-ho-ho", "Yes"],
 	"custom_guilds": false
 }
