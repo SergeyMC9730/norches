@@ -34,6 +34,9 @@
 
         "bank-changelang.success": "**Язык был успешно изменён!**",
         
+        "norches-test.success": "Успех!",
+        "norches-test.error": "Ошибка",
+
         "bank-convert.already-converted": "Извините!\nЗапрошенный аккаунт **уже был конвертирован!**",
         "bank-convert.success": "**Аккаунт был успешно конвентирован на {0}!**",
         "bank-convert.success.lang": "**Аккаунт был успешно конвентирован на {0}!**\nРекомендуем **сменить язык аккаунта.** По умолчанию он `en` (English)",
@@ -60,6 +63,8 @@
         
         "norches-info.success.tps": "**ТПС:** ",
         "norches-info.success.list": "\n**Игроков на сервере:** ",
+        "norches-info.success.uptime.local": "**Бот работает уже:** `{0} сек, {1} мин, {2} ч`",
+        "norches-info.success.uptime.remote": "**Сервер работает уже:** `{0} сек, {1} мин, {2} ч`",
         "norches-info.error.na": "Извините!\nНе удалось **получить информацию** от сервера!",
 
         "bank-reset.success": "**База данных банка успешно сброшена до изначального состояния**",
@@ -108,6 +113,9 @@
 
         "bank-getaccount.success": "Account ID: **`{0}`**\nAccount Name: **`{1}`**\nAccount Type: **{2}**\nOwner Nickname: **`{3}`**\nOwner: **<@{4}>**\nBalance: **{5}** <:membrane:931940593179979806> {6}\nLinked Accounts: **{7}**\nMessages: **{8}**\nLast Activity: **`{9}`**\n\nAccount Structure Version: **`{10}`**",
 
+        "norches-test.success": "Success!",
+        "norches-test.error": "Error",
+
         "bank-changebalance.money": "Error!\nYou don't have **enough money!**",
         "bank-changebalance.set.success": "**Successfully set** {0} <:membrane:931940593179979806> {1} to Account ID **`{2}`**!",
         "bank-changebalance.add.success": "**Successfully added** {0} <:membrane:931940593179979806> {1} to Account ID **`{2}`**!",
@@ -128,6 +136,8 @@
         
         "norches-info.success.tps": "**TPS:** ",
         "norches-info.success.list": "\n**Players:** ",
+        "norches-info.success.uptime.local": "**Bot is running:** `{0} s, {1} min, {2} h`",
+        "norches-info.success.uptime.remote": "**Server is running:** `{0} s, {1} min, {2} h`",
         "norches-info.error.na": "Error!\nCannot **get server information!**",
 
         "bank-reset.success": "**Database was successfully cleaned to its original state**",

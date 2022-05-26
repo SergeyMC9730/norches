@@ -13,6 +13,8 @@
     "discord.js": "^13.5.0",
     "erlpack": "github:discord/erlpack",
     "markov-chain-nlg": "^1.0.3",
+    "mysql": "^2.18.1",
+    "mysql2": "^2.3.3",
     "utf-8-validate": "^5.0.8",
     "ws": "^8.4.2",
     "zlib-sync": "^0.1.7"

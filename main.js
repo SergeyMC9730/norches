@@ -6,6 +6,7 @@ var settings = JSON.parse(fs.readFileSync("settings.json").toString("utf8"));
 var ws = require("ws");
 var langlist = require("./lang.json");
 const { randomUUID } = require("crypto");
+var sql = require("./sql");
 
 if (!String.prototype.format) {
   String.prototype.format = function() {
@@ -67,7 +68,7 @@ if(!Object.keys(sprivate).includes("private_revision")) {
       break;
     }
     case 4: {
-      fs.writeFileSync("private.json", JSON.stringify({ guilds: sprivate.guilds, bank: sprivate.bank, players: sprivate.players, timers: sprivate.timers, xp: sprivate.xp, server: sprivate.server, blocklist: sprivate.blocklist, custom_guilds: custom_guilds, login_codes: [], private_revision: settings.private_revision }));
+      fs.writeFileSync("private.json", JSON.stringify({ guilds: sprivate.guilds, bank: sprivate.bank, players: sprivate.players, timers: sprivate.timers, xp: sprivate.xp, server: sprivate.server, blocklist: sprivate.blocklist, custom_guilds: sprivate.custom_guilds, login_codes: [], private_revision: settings.private_revision }));
       break;
     }
     case settings.private_revision: {
@@ -111,43 +112,6 @@ var getCurrency = (lang = "") => {
 
 var securityLayerKey = "";
 
-try {
-  serverSocketConnection = new ws(`${sprivate.server.WebSocketIP}:${sprivate.server.WebSocketPort}`);
-  if(serverSocketConnection != undefined || serverSocketConnection != null){
-    serverSocketConnection.on('open', (ws) => {
-      isOpen = true;
-      securityLayerKey = randomUUID();
-      serverSocketConnection.send(JSON.stringify({
-        "type": "sendKey",
-        "userKey": securityLayerKey
-      }))
-      console.log("Successfully connected to the server");
-    })
-    serverSocketConnection.on('error', (ws, err) => {
-      isOpen = false;
-      console.log("Unable to connect to the server: %s", err);
-      return;
-    })
-    serverSocketConnection.on("close", (ws, code, reason) => {
-      isOpen = false;
-      console.log("Server connection closed");
-      return;
-    })
-    serverSocketConnection.on("message", (data, isBinary) => {
-      if(latestRequest == "tps"){
-        latestSocketData = parseFloat(data.toString()).toPrecision(3)  
-      } else {
-        latestSocketData = data.toString();
-      }
-      serverOnMessageTrigger = true;
-    })
-  } else {
-    console.log("Unable to connect to the server");
-  }
-} catch (e) {
-  console.log("Unable to connect to the server: %s", e);
-}
-
 //Init libpaint
 if(libpaint.extended.isnan(libpaint.user.getuserpaintings("0"))) libpaint.user.createuserdata("0");
 //Change ASCII symbols
@@ -172,13 +136,60 @@ var lightinglevel = {
   "0": "36"
 };
 
+setTimeout(() => {
+  console.log("Connecting to the server backend...");
+  try {
+    serverSocketConnection = new ws(`${sprivate.server.WebSocketIP}:${sprivate.server.WebSocketPort}`);
+    if(serverSocketConnection != undefined || serverSocketConnection != null){
+      serverSocketConnection.on('open', (ws) => {
+        isOpen = true;
+        securityLayerKey = randomUUID();
+        serverSocketConnection.send(JSON.stringify({
+          "type": "sendKey",
+          "userKey": securityLayerKey
+        }))
+        console.log("Successfully connected to the server");
+      })
+      serverSocketConnection.on('error', (ws, err) => {
+        isOpen = false;
+        console.log("Unable to connect to the server: %s", err);
+        return;
+      })
+      serverSocketConnection.on("close", (ws, code, reason) => {
+        isOpen = false;
+        console.log("Server connection closed");
+        return;
+      })
+      serverSocketConnection.on("message", (data, isBinary) => {
+        if(latestRequest == "tps"){
+          latestSocketData = parseFloat(data.toString()).toPrecision(3)  
+        } else {
+          latestSocketData = data.toString();
+        }
+        serverOnMessageTrigger = true;
+      })
+    } else {
+      console.log("Unable to connect to the server");
+    }
+  } catch (e) {
+    console.log("Unable to connect to the server: %s", e);
+  }
+}, 100);
+
+setTimeout(() => {
+  console.log("Connecting to SQL...");
+  sql.init();
+}, 100);
+
 var update_commands = () => {
+  console.log("Updating commands...");
   if(settings.custom_guilds) {
     sprivate.custom_guilds.forEach((g) => {
       if (g !== "removed") {
         try {
-          console.log("Updating on %s (CUSTOM)", g.id);
+          console.log("Updating on %s (CUSTOM) ... ", g.id);
           rest.put(Routes.applicationGuildCommands(clientid, g.id), { body: settings.commands });
+          process.stdout.write(" Updated.\n");
         } catch (err) {
           console.error(err);
         }
@@ -188,8 +199,9 @@ var update_commands = () => {
     sprivate.guilds.forEach((g) => {
       if (g !== "removed") {
         try {
-          console.log("Updating on %s", g.id);
+          console.log("Updating on %s ... ", g.id);
           rest.put(Routes.applicationGuildCommands(clientid, g.id), { body: settings.commands });
+          process.stdout.write(" Updated.\n");
         } catch (err) {
           console.error(err);
         }
@@ -198,7 +210,15 @@ var update_commands = () => {
   }
 }
 
-update_commands();
+setTimeout(update_commands, 100);
+setTimeout(() => {
+  console.log("Training Markov Chains...");
+  markovc.trainTxt("input_result.txt", "\n");
+}, 100);
+setTimeout(() => {
+  console.log("Logging in to Discord...");
+  client.login(token);
+}, 100);
 
 var save_private = () => {
   fs.writeFileSync("private.json", JSON.stringify(sprivate));
@@ -207,9 +227,9 @@ var read_private = () => {
   sprivate = JSON.parse(fs.readFileSync("private.json").toString("utf8"))
 }
 
-markovc.trainTxt("input_result.txt", "\n");
 
-var { Client, Intents, MessageEmbed } = require('discord.js');
+var { Client, Intents, MessageEmbed, CommandInteraction } = require('discord.js');
+const { stdout } = require("process");
 var client = new Client({intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]});
 
 var is_ready = false;
@@ -580,11 +600,32 @@ var command_set = {
       ]) + render, lng)]});
     }
   },
-  "gen": async (interaction) => {
+  "norches-gen": async (interaction) => {
     var gen = markovc.generate(300);
     return await interaction.reply({embeds: [make_norches_message((gen.length < 4) ? gtsf("gen.error", lng, []) : gen)], ephemeral: true});
   },
-  "xp": async (interaction) => {
+  /**
+   * @param {CommandInteraction} interaction
+   */
+  "norches-test": async (interaction) => {
+    var actionID = interaction.options.getInteger("action", true);
+    switch (actionID) {
+      case 0: {
+        sql.selecttable("keydata");
+        var r = await sql.getstructure();
+        if(!r) {
+          interaction.reply({embeds: [make_norches_message(gtsf("norches-test.error", lng, []))], ephemeral: false});
+        } else {
+          interaction.reply({embeds: [make_norches_message(`${gtsf("norches-test.success", lng, [])}\n${"```"}\n${r[0].}\n${"```"}`)], ephemeral: false});
+        }
+        break;
+      }
+      default: {
+        return await interaction.reply({embeds: [make_norches_message(gtsf("norches-test.error", lng, []))], ephemeral: false});
+      }
+    }
+  },
+  "norches-xp": async (interaction) => {
     return await interaction.reply("https://www.youtube.com/watch?v=dQw4w9WgXcQ", {ephemeral: true});
   },
   "norches-ben": async (interaction) => {
@@ -799,17 +840,11 @@ var command_set = {
   "norches-info": async (interaction) => {
     var additionalInfo = "";
     if(isOpen){
-      latestRequest = "tps";
-      serverSocketConnection.send("tps");
+      latestRequest = "full";
+      serverSocketConnection.send("full");
       setTimeout(() => {
-        additionalInfo += gtsf("norches-info.success.tps", lng, []) + latestSocketData;
-        latestRequest = "list"
-        serverSocketConnection.send("list");
-        setTimeout(async () => {
-          additionalInfo += gtsf("norches-info.success.list", lng, []) + latestSocketData;
-          await interaction.reply({embeds: [make_norches_message(additionalInfo)]});
-        }, 500);
-      }, 500);
+        
+      }, 600);
     } else {
       return await interaction.reply({embeds: [make_norches_message(gtsf("norches-info.error.na", lng, []), lng)]});
     }
@@ -888,7 +923,6 @@ var lng;
 
 client.on('interactionCreate', async interaction => {
   if (!interaction.isCommand()) return;
-
   if (command_list.includes(interaction.commandName) && sprivate.blocklist.includes(interaction.user.id)) {
     return await interaction.reply({
       embeds: [make_norches_message("ratio (you have been banned)")],
@@ -907,66 +941,7 @@ client.on('interactionCreate', async interaction => {
     console.log(interaction.user.id == roles.bot_admin);
   }
 
-  if (interaction.commandName === "bank-info") {
-    command_set["bank-info"](interaction);
-  }
-
-  if (interaction.commandName === "gen") {
-    command_set["gen"](interaction);
-  }
-
-  if (interaction.commandName === "xp") {
-    command_set["xp"](interaction)
-  }
-  if (interaction.commandName === "norches-ben") {
-    command_set["norches-ben"](interaction);
-  }
-  if (interaction.commandName === "bank-createaccount") {
-    command_set["bank-createaccount"](interaction);
-  }
-  if (interaction.commandName === "bank-changestatus") {
-    command_set["bank-changestatus"](interaction);
-  }
-  if(interaction.commandName === "bank-changelang"){
-    command_set["bank-changelang"](interaction);
-  }
-
-  if(interaction.commandName === "bank-convert") {
-    command_set["bank-convert"](interaction);
-  }
-  if (interaction.commandName === "bank-getaccount") {
-    command_set["bank-getaccount"](interaction);
-  }
-  if (interaction.commandName === "bank-changebalance") {
-    command_set["bank-changebalance"](interaction);
-  }
-  if (interaction.commandName === "bank-schedule") {
-    command_set["bank-schedule"](interaction);
-  }
-  if (interaction.commandName === "bank-unschedule") {
-    command_set["bank-unschedule"](interaction);
-  }
-  if (interaction.commandName === "bank-link"){
-    command_set["bank-link"](interaction);
-  }
-  if(interaction.commandName === "bank-unlink"){
-    command_set["bank-unlink"](interaction);
-  }
-  if (interaction.commandName === "norches-info") {
-    command_set["norches-info"](interaction);
-  }
-  if (interaction.commandName === "bank-reset"){
-    command_set["bank-reset"](interaction);
-  }
-  if (interaction.commandName === "norches-donationevent-test"){
-    command_set["norches-donationevent-test"](interaction);
-  }
-  if (interaction.commandName === "bank-deleteaccount") {
-    command_set["bank-deleteaccount"](interaction);
-  }
-  if (interaction.commandName === "norches-patch") {
-    command_set["norches-patch"](interaction);
-  }
+  if(command_list.includes(interaction.commandName)) command_set[interaction.commandName](interaction);
 });
 client.on("guildCreate", async (guild) => {
   read_private();
@@ -983,8 +958,6 @@ client.on("guildDelete", async (guild) => {
   });
   save_private();
 });
-
-client.login(token);
 
 module.exports = {
   getTraslatedString: gtsf,
@@ -1014,5 +987,6 @@ module.exports = {
   make_norches_message: make_norches_message,
   roleCheck: roleCheck,
   user_roles: user_roles,
-  lng: lng
+  lng: lng,
+  sql: sql
 }

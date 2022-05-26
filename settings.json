@@ -1,11 +1,11 @@
 {
 	"commands": [
 		{
-			"name": "gen",
+			"name": "norches-gen",
 			"description": "generate message using old 10k FWorld message dump"
 		},
 		{
-			"name": "xp",
+			"name": "norches-xp",
 			"description": "get XP count"
 		},
 		{
@@ -248,7 +248,19 @@
 		},
 		{
 			"name": "norches-patch",
-			"description": "Patches code in realtime (patch.json => patch.js)"
+			"description": "Patches code in real time (patch.json => patch.js)"
+		},
+		{
+			"name": "bank-ncoin-buy",
+			"description": "Buy NCoin",
+			"options": [
+				{
+					"type": 4,
+					"name": "count",
+					"description": "NCoin count",
+					"required": true
+				}
+			]
 		},
 		{
 			"name": "bank-convert",
@@ -313,6 +325,24 @@
 			]
 		},
 		{
+			"name": "norches-test",
+			"description": "Test command",
+			"options": [
+				{
+					"type": 4,
+					"name": "action",
+					"description": "Test action",
+					"choices": [
+						{
+							"name": "SQL test",
+							"value": 0
+						}
+					],
+					"required": true
+				}
+			]
+		},
+		{
 			"name": "norches-donationevent-test",
 			"description": "Checks if donation event system is working",
 			"options": [
@@ -338,7 +368,7 @@
 							"value": 3
 						},
 						{
-							"name": "Летучие мыши",
+							"name": "Bats",
 							"value": 4
 						}
 					],
