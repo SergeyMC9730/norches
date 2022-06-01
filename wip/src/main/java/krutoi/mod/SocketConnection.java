@@ -47,12 +47,11 @@ public class SocketConnection extends WebSocketServer {
     @Override
     public void onMessage(WebSocket connection, String message){
         switch (message){
-            case "tps": {
-                connection.send("" + plugin.lag.getTPS());
-                break;
-            }
-            case "list": {
-                connection.send("" + plugin.getServer().getOnlinePlayers().size());
+            case "full": {
+                connection.send("" + plugin.lag.getTPS() 
+                + ";" + plugin.getServer().getOnlinePlayers().size()
+                + ";" + plugin.uptime_C + ":" + plugin.uptime_B + ":" + plugin.uptime_A
+                );
                 break;
             }
             default: {
@@ -78,7 +77,7 @@ public class SocketConnection extends WebSocketServer {
                                             boolean isCommandSuccessful;
                                             isCommandSuccessful = plugin.getServer().dispatchCommand(c, String.format(new ColorFormatter().colorFormat("title %s actionbar \"<cy>%s<r> - <clp>%d руб<r>: %s\""), toPlayer, author, size, contains));
     
-                                            plugin.getLogger().info("isCommandSuccessful state: " + isCommandSuccessful);      
+                                            plugin.getLogger().info("isCommandSuccessful 1 state: " + isCommandSuccessful);      
                                         }
                                     }.runTask(plugin);
     
@@ -100,7 +99,15 @@ public class SocketConnection extends WebSocketServer {
                                             break;
                                         }
                                         case 4: { //bats
-                                            //TODO Make it later
+                                            new BukkitRunnable() {
+                                                @Override
+                                                public void run() {
+                                                    boolean isCommandSuccessful;
+                                                    isCommandSuccessful = plugin.getServer().dispatchCommand(c, String.format("execute as %s run summon bat", toPlayer, author, size, contains));
+            
+                                                    plugin.getLogger().info("isCommandSuccessful 0 state: " + isCommandSuccessful);      
+                                                }
+                                            }.runTask(plugin);
                                             break;
                                         }
                                     }
@@ -113,6 +120,18 @@ public class SocketConnection extends WebSocketServer {
                                 isKeySent = true;
                                 userKey = j.get("userKey").getAsString();
                             }
+                            break;
+                        }
+                        case "whitelistSet": {
+                            String playerName = j.get("playerName").getAsString();
+                            Boolean whitelistFlag = j.get("whitelistFlag").getAsBoolean();
+
+                            Player p = plugin.getServer().getPlayerExact(playerName);
+
+                            if(p == null) return;
+
+                            p.setWhitelisted(whitelistFlag);
+
                             break;
                         }
                         default: {

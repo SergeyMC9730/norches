@@ -28,10 +28,13 @@ public class App extends JavaPlugin implements Listener {
     public SocketConnection current;
     public TPS tps;
     public Lag lag;
-    public boolean isNorchesBuild = true;
+    public boolean isNorchesBuild = false;
     public short port = 25674;
     public Tools tools;
     public BukkitTask playerCheckTask;
+    public int uptime_A;
+    public int uptime_B;
+    public int uptime_C;
 
     @Override
     public void onEnable(){
@@ -47,6 +50,16 @@ public class App extends JavaPlugin implements Listener {
         playerCheckTask = tools.createTimer(new Runnable() {
             @Override
             public void run(){
+                uptime_A++;
+                if(uptime_A == 60) {
+                    uptime_B++;
+                    if(uptime_B == 60) {
+                        uptime_C++;
+                        uptime_B = 0;
+                    }
+                    uptime_A = 0;
+                }
+
                 //getLogger().info("Check player states");
                 if(getServer().getOnlinePlayers().size() == 0 || getServer().getAllowFlight()) return;
 
