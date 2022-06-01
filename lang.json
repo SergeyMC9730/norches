@@ -62,13 +62,19 @@
         "bank-unlink.success": "Аккаунт был **успешно отсоединён** от вашего!",
         
         "norches-info.success": "**ТПС:** {0}\n**Игроков на сервере:** {1} игроков\n**Аптайм бота:** {2} сек, {3} мин, {4} ч\n**Аптайм сервера:** {5} сек, {6} мин, {7} ч",
-        "norches-info.error.na": "Извините!\nНе удалось **получить информацию** от сервера!",
+        "norches-info.error": "Извините!\nНе удалось **получить информацию** от сервера!",
 
         "bank-reset.success": "**База данных банка успешно сброшена до изначального состояния**",
 
         "norches-donationevent-test.success": "{0}",
 
-        "bank-deleteaccount.success": "**Аккаунт был успешно удалён!**"
+        "bank-deleteaccount.success": "**Аккаунт был успешно удалён!**",
+
+        "norches-generate-code.success": "Код был **успешно создан**: `{0}`\n\n***RU:***\nВаша заявка была успешно принята.\nЧтобы войти в вайтлист, введите `norches-login <код>`.\nВаш код: `{0}`\n\n***EN:***\nYour request has been succesfully accepted. To get into whitelist type `norches-login <code>`.\nYour code is `{0}`.",
+
+        "norches-login.success": "Вы были **добавлены в вайтлист**.\nСчастливой игры!",
+        "norches-login.error.na": "Не удалось **отправить запрос** серверу. Повторите попытку позже.",
+        "norches-login.error.notfound": "Введённый вами код **не существует!**"
     },
     "en": {
         "header.bank": "Bank",
@@ -132,12 +138,18 @@
         "bank-unlink.success": "Account have **successfully unlinked!**",
         
         "norches-info.success": "**TPS:** {0}\n**Players on Server:** {1} players\n**Bot Uptime:** {2} s, {3} min, {4} h\n**Server Uptime:** {5} s, {6} min, {7} h",
-        "norches-info.error.na": "Error!\nCannot **get server information!**",
+        "norches-info.error": "Error!\nCannot **get server information!**",
 
         "bank-reset.success": "**Database was successfully cleaned to its original state**",
 
         "norches-donationevent-test.success": "{0}",
 
-        "bank-deleteaccount.success": "**Account has successfully deleted!**"
+        "bank-deleteaccount.success": "**Account has successfully deleted!**",
+
+        "norches-generate-code.success": "Key has been **successfully made**: `{0}`\n\n***RU:***\nВаша заявка была успешно принята.\nЧтобы войти в вайтлист, введите `norches-login <код>`.\nВаш код: `{0}`\n\n***EN:***\nYour request has been succesfully accepted. To get into whitelist type `norches-login <code>`.\nYour code is `{0}`.",
+
+        "norches-login.success": "You have been **added to the whitelist**.\nGood Game!",
+        "norches-login.error.na": "Unable to **send request** to server. Try again later.",
+        "norches-login.error.notfound": "Code you're entered **does not exists!**"
     }
 }

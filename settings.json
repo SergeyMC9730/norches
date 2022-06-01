@@ -10,10 +10,10 @@
 		},
 		{
 			"name": "bank-info",
-			"description": "bank information (NCoin, players etc)"
+			"description": "bank information (NCoin, players etc.)"
 		},
 		{
-			"name": "bank-createaccount",
+			"name": "norches-createaccount",
 			"description": "Create bank account",
 			"options": [
 				{
@@ -145,14 +145,22 @@
 				{
 					"type": 4,
 					"name": "code",
-					"description": "4-digit code",
+					"description": "Your code",
 					"required": true
 				}
 			]	
 		},
 		{
 			"name": "norches-generate-code",
-			"description": "Generates 4-digit code"
+			"description": "Generates 4-digit code",
+			"options": [
+				{
+					"type": 3,
+					"name": "playerNickname",
+					"description": "Player Nickname",
+					"required": true
+				}
+			]
 		},
 		{
 			"name": "bank-schedule",
@@ -414,6 +422,6 @@
 		"version": "1.0"
 	},
 	"private_revision": 5,
-	"benLookupTable": ["No", "Ewwww", "Be-be", "Ho-ho-ho", "Yes"],
+	"benLookupTable": ["No", "Ewwww", "Be-be-be ...", "Ho-ho-ho", "Yes"],
 	"custom_guilds": false
 }

@@ -5,7 +5,7 @@ var fs = require("fs");
 var settings = JSON.parse(fs.readFileSync("settings.json").toString("utf8"));
 var ws = require("ws");
 var langlist = require("./lang.json");
-const { randomUUID } = require("crypto");
+const { randomUUID, randomInt } = require("crypto");
 var sql = require("./sql");
 
 if (!String.prototype.format) {
@@ -90,7 +90,8 @@ var roles = {
     main: "927917635113484328"
   },
   police: "950039874180890644",
-  bot_admin: "320888908785385472"
+  bot_admin: "320888908785385472",
+  admin: "927916967338344508"
 }
 
 //get translated string formatted
@@ -297,6 +298,8 @@ client.on('ready', () => {
 //norches-info - Everyone
 //norches-ben - Everyone
 //norches-patch - Bot Admin
+//norches-login - Everyone
+//norches-generate-code - Admin
 
 var command_list = [];
 
@@ -461,6 +464,53 @@ var command_set = {
     } else {
       await interaction.reply({embeds: [make_bank_message(gtsf("bank-createaccount.exists", lng, []), lng)]}); 
     }
+  },
+  /**
+   * @param {CommandInteraction} interaction
+   */
+  "norches-generate-code": async (interaction) => {
+    if(!roleCheck(roles.admin, user_roles)) return await interaction.reply({embeds: [make_norches_message(gtsf("norches.access-denied", lng, []), lng)]});
+
+    var playerNickname = interaction.options.getString("playerNickname", true);
+
+    read_private();
+    var randomCode = randomInt(9999);
+    sprivate.login_codes.push({randomCode, playerNickname});
+    save_private();
+    return await interaction.reply({embeds: [make_norches_message(gtsf("norches-generate-code", lng, [randomCode]), lng)]});
+  },
+  /**
+   * @param {CommandInteraction} interaction
+   */
+   "norches-generate-code": async (interaction) => {
+    if(!roleCheck(roles.admin, user_roles)) return await interaction.reply({embeds: [make_norches_message(gtsf("norches.access-denied", lng, []), lng)]});
+
+    var playerNickname = interaction.options.getString("playerNickname", true);
+
+    read_private();
+    var randomCode = randomInt(9999);
+    sprivate.login_codes.push([randomCode, playerNickname]);
+    save_private();
+    return await interaction.reply({embeds: [make_norches_message(gtsf("norches-generate-code", lng, [randomCode]), lng)]});
+  },
+  /**
+   * @param {CommandInteraction} interaction
+   */
+   "norches-login": async (interaction) => {
+    if(!roleCheck(roles.admin, user_roles)) return await interaction.reply({embeds: [make_norches_message(gtsf("norches.access-denied", lng, []), lng)]});
+
+    if(!isOpen) {
+      return await interaction.reply({embeds: [make_norches_message(gtsf("norches-login.error", lng, []), lng)]});
+    } else {
+      var i = [0, false];
+      while(i[0] < spr)
+    }
+
+    read_private();
+    var randomCode = randomInt(9999);
+    sprivate.login_codes.push({randomCode, playerNickname});
+    save_private();
+    return await interaction.reply({embeds: [make_norches_message(gtsf("norches-generate-code", lng, [randomCode]), lng)]});
   },
   "bank-changebalance": async (interaction) => {
     if(interaction.guild.id != "927851863146102804") return await interaction.reply({embeds: [make_norches_message("**Ошибка!**\nЗа пределами сервера разрешены **лишь команды без возможности записи данных**, чтобы не допустить *несанкционированного доступа к данным приватного сервера!*")]});
@@ -846,7 +896,16 @@ var command_set = {
       setTimeout(() => {
         var parsed = latestSocketData.split(";");
         var timeps = parsed[2].split(":");
-        return await interaction.reply({embeds: [make_bank_message(gtsf("norches-info.success", lng, [parsed[0], parsed[1], uptime[2], uptime[1], uptime[0], timeps[2], timeps[1], timeps[0]]), lng)]});
+        return await interaction.reply({embeds: [make_bank_message(gtsf("norches-info.success", lng, [
+          parsed[0], 
+          parsed[1], 
+          uptime[2], 
+          uptime[1], 
+          uptime[0], 
+          timeps[2], 
+          timeps[1], 
+          timeps[0]
+        ]), lng)]});
       }, 500);
     } else {
       return await interaction.reply({embeds: [make_norches_message(gtsf("norches-info.error", lng, []), lng)]});
