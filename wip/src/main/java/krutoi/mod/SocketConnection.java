@@ -125,17 +125,18 @@ public class SocketConnection extends WebSocketServer {
                         case "whitelistSet": {
                             String playerName = j.get("playerName").getAsString();
                             Boolean whitelistFlag = j.get("whitelistFlag").getAsBoolean();
-
-                            Player p = plugin.getServer().getPlayerExact(playerName);
-
-                            if(p == null) return;
-
-                            p.setWhitelisted(whitelistFlag);
+                            String UUIDkey = j.get("key").getAsString();
+                            
+                            if(UUIDkey == userKey && isKeySent) {
+                                Player p = plugin.getServer().getPlayerExact(playerName);
+                                if(p == null) return;
+                                p.setWhitelisted(whitelistFlag);
+                            }
 
                             break;
                         }
                         default: {
-                            plugin.getLogger().warning("Unknown message type: " + j.get("type").getAsString());
+                            plugin.getLogger().warning("Unknown message: " + j.get("type").getAsString());
                             break;
                         }
                     }
