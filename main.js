@@ -144,6 +144,7 @@ setTimeout(() => {
       serverSocketConnection.on('open', (ws) => {
         isOpen = true;
         securityLayerKey = randomUUID();
+        console.log("Sending UUID key to server");
         serverSocketConnection.send(JSON.stringify({
           "type": "sendKey",
           "userKey": securityLayerKey
@@ -616,7 +617,8 @@ var command_set = {
         if(!r) {
           interaction.reply({embeds: [make_norches_message(gtsf("norches-test.error", lng, []))], ephemeral: false});
         } else {
-          interaction.reply({embeds: [make_norches_message(`${gtsf("norches-test.success", lng, [])}\n${"```"}\n${r[0].}\n${"```"}`)], ephemeral: false});
+          console.log(r);
+          interaction.reply({embeds: [make_norches_message(`${gtsf("norches-test.success", lng, [])}\n${"```"}\n${r[0]}\n${"```"}`)], ephemeral: false});
         }
         break;
       }
@@ -838,15 +840,16 @@ var command_set = {
     }
   },
   "norches-info": async (interaction) => {
-    var additionalInfo = "";
     if(isOpen){
       latestRequest = "full";
       serverSocketConnection.send("full");
       setTimeout(() => {
-        
-      }, 600);
+        var parsed = latestSocketData.split(";");
+        var timeps = parsed[2].split(":");
+        return await interaction.reply({embeds: [make_bank_message(gtsf("norches-info.success", lng, [parsed[0], parsed[1], uptime[2], uptime[1], uptime[0], timeps[2], timeps[1], timeps[0]]), lng)]});
+      }, 500);
     } else {
-      return await interaction.reply({embeds: [make_norches_message(gtsf("norches-info.error.na", lng, []), lng)]});
+      return await interaction.reply({embeds: [make_norches_message(gtsf("norches-info.error", lng, []), lng)]});
     }
   },
   "bank-reset": async (interaction) => {
