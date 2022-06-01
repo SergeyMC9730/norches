@@ -497,20 +497,32 @@ var command_set = {
    * @param {CommandInteraction} interaction
    */
    "norches-login": async (interaction) => {
-    if(!roleCheck(roles.admin, user_roles)) return await interaction.reply({embeds: [make_norches_message(gtsf("norches.access-denied", lng, []), lng)]});
+    var playerCode = interaction.options.getInteger("code");
+    read_private();
 
     if(!isOpen) {
-      return await interaction.reply({embeds: [make_norches_message(gtsf("norches-login.error", lng, []), lng)]});
+      return await interaction.reply({embeds: [make_norches_message(gtsf("norches-login.error.na", lng, []), lng)]});
     } else {
       var i = [0, false];
-      while(i[0] < spr)
+      while(i[0] < sprivate.login_codes.length) {
+        if(sprivate.login_codes[i[0]][0] == playerCode) {
+          i[1] = true;
+          var toSend = {
+            type: "whitelistSet",
+            playerName: sprivate.login_codes[i[0]][1],
+            key: securityLayerKey,
+            whitelistFlag: true
+          };
+          serverSocketConnection.send(JSON.stringify(toSend));
+          sprivate.login_codes[i[0]] = null;
+        }
+      }
+      if(i[1]) {
+        return await interaction.reply({embeds: [make_norches_message(gtsf("norches-login.success", lng, []), lng)]});
+      } else {
+        return await interaction.reply({embeds: [make_norches_message(gtsf("norches-login.error.notfound", lng, []), lng)]});
+      }
     }
-
-    read_private();
-    var randomCode = randomInt(9999);
-    sprivate.login_codes.push({randomCode, playerNickname});
-    save_private();
-    return await interaction.reply({embeds: [make_norches_message(gtsf("norches-generate-code", lng, [randomCode]), lng)]});
   },
   "bank-changebalance": async (interaction) => {
     if(interaction.guild.id != "927851863146102804") return await interaction.reply({embeds: [make_norches_message("**Ошибка!**\nЗа пределами сервера разрешены **лишь команды без возможности записи данных**, чтобы не допустить *несанкционированного доступа к данным приватного сервера!*")]});
