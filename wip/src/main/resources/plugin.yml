@@ -6,3 +6,6 @@ commands:
   gravity:
     description: Disables or enables gravity for player or yourself. 
     usage: /gravity <player>
+  securitylayerkeyreset:
+    description: Resets key
+    usage: /securitylayerkeyreset
