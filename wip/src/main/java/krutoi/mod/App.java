@@ -18,6 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
+import org.checkerframework.checker.units.qual.s;
 
 public class App extends JavaPlugin implements Listener {
     // public static void main( String[] args )
@@ -172,6 +173,12 @@ public class App extends JavaPlugin implements Listener {
                     }
                     return true;
                 }
+            }
+        }
+        if(command.getName().equalsIgnoreCase("securitylayerkeyreset")) {
+            if(sender instanceof ConsoleCommandSender) {
+                current.isKeySent = false;
+                getLogger().info("isKeySent flag have been succesfully disabled");
             }
         }
         return true;
