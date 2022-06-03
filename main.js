@@ -518,6 +518,8 @@ var command_set = {
         }
       }
       if(i[1]) {
+        var playerRole = interaction.guild.roles.cache.get(roles.player);
+        interaction.member.roles.add(playerRole);
         return await interaction.reply({embeds: [make_norches_message(gtsf("norches-login.success", lng, []), lng)]});
       } else {
         return await interaction.reply({embeds: [make_norches_message(gtsf("norches-login.error.notfound", lng, []), lng)]});

@@ -18,7 +18,7 @@
         "norches.access-denied": "Извините!\nУ вас **нет прав на выполнение данной команды!**",
         "norches.blocked": "ratio",
         "norches.crash": "Norches Бот крашнулся по ошибке ",
-        "norches.backup": "Запуск Резервного бота",
+        "norches.recovery": "Запуск Резервного бота",
         "norches.server.na": "Извините!\nНе удалось **подключиться к серверу!**",
 
         "bank.account.doesnotexists": "Извините!\nЗапрошенный аккаунт **не существует!**",
@@ -94,7 +94,7 @@
         "norches.access-denied": "Error!\nYou don't have **enough permissions to execute this command!**",
         "norches.blocked": "ratio",
         "norches.crash": "Norches Бот have crashed due to error ",
-        "norches.backup": "Loading the Backup Bot",
+        "norches.recovery": "Loading the Recovery Bot",
         "norches.server.na": "Error!\nUnable **to connect to the server!**",
 
         "bank.account.doesnotexists": "Error!\nRequested account **does not exists!**",
