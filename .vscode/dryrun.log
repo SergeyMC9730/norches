@@ -1,0 +1,11 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory '/media/k/4E5CA6705CA6528F/notebook/n/norches'
+rm maven -rfv
+sudo apt-get update
+sudo apt-get install wget unzip openjdk-17-jdk
+wget "https://dlcdn.apache.org/maven/maven-3/3.8.5/binaries/apache-maven-3.8.5-bin.zip" -O maven.zip
+unzip maven.zip
+rm maven.zip
+mv apache-maven-* maven
+make: Leaving directory '/media/k/4E5CA6705CA6528F/notebook/n/norches'
+ 
