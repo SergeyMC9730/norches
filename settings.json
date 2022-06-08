@@ -2,11 +2,11 @@
 	"commands": [
 		{
 			"name": "norches-gen",
-			"description": "generate message using old 10k FWorld message dump"
+			"description": "Generates random message"
 		},
 		{
 			"name": "norches-xp",
-			"description": "get XP count"
+			"description": "Gets your XP score"
 		},
 		{
 			"name": "bank-info",
@@ -156,7 +156,7 @@
 			"options": [
 				{
 					"type": 3,
-					"name": "playerNickname",
+					"name": "playernickname",
 					"description": "Player Nickname",
 					"required": true
 				}
@@ -423,5 +423,6 @@
 	},
 	"private_revision": 5,
 	"benLookupTable": ["No", "Ewwww", "Be-be-be ...", "Ho-ho-ho", "Yes"],
-	"custom_guilds": false
+	"custom_guilds": false,
+	"sql_support": false
 }

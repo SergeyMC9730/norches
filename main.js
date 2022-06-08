@@ -468,30 +468,16 @@ var command_set = {
   /**
    * @param {CommandInteraction} interaction
    */
-  "norches-generate-code": async (interaction) => {
-    if(!roleCheck(roles.admin, user_roles)) return await interaction.reply({embeds: [make_norches_message(gtsf("norches.access-denied", lng, []), lng)]});
-
-    var playerNickname = interaction.options.getString("playerNickname", true);
-
-    read_private();
-    var randomCode = randomInt(9999);
-    sprivate.login_codes.push({randomCode, playerNickname});
-    save_private();
-    return await interaction.reply({embeds: [make_norches_message(gtsf("norches-generate-code", lng, [randomCode]), lng)]});
-  },
-  /**
-   * @param {CommandInteraction} interaction
-   */
    "norches-generate-code": async (interaction) => {
     if(!roleCheck(roles.admin, user_roles)) return await interaction.reply({embeds: [make_norches_message(gtsf("norches.access-denied", lng, []), lng)]});
 
-    var playerNickname = interaction.options.getString("playerNickname", true);
+    var playerNickname = interaction.options.getString("playernickname", true);
 
     read_private();
     var randomCode = randomInt(9999);
     sprivate.login_codes.push([randomCode, playerNickname]);
     save_private();
-    return await interaction.reply({embeds: [make_norches_message(gtsf("norches-generate-code", lng, [randomCode]), lng)]});
+    return await interaction.reply({embeds: [make_norches_message(gtsf("norches-generate-code.success", lng, [randomCode]), lng)]});
   },
   /**
    * @param {CommandInteraction} interaction
@@ -505,11 +491,13 @@ var command_set = {
     } else {
       var i = [0, false];
       while(i[0] < sprivate.login_codes.length) {
-        if(sprivate.login_codes[i[0]][0] == playerCode) {
+        var codeData = sprivate.login_codes[i[0]];
+        console.log(codeData, codeData[0], codeData[1]);
+        if(codeData[0] == playerCode) {
           i[1] = true;
           var toSend = {
             type: "whitelistSet",
-            playerName: sprivate.login_codes[i[0]][1],
+            playerName: codeData[1],
             key: securityLayerKey,
             whitelistFlag: true
           };
@@ -910,12 +898,12 @@ var command_set = {
       setTimeout(() => {
         var parsed = latestSocketData.split(";");
         var timeps = parsed[2].split(":");
-        return await interaction.reply({embeds: [make_bank_message(gtsf("norches-info.success", lng, [
+        interaction.reply({embeds: [make_norches_message(gtsf("norches-info.success", lng, [
           parsed[0], 
           parsed[1], 
-          uptime[2], 
-          uptime[1], 
           uptime[0], 
+          uptime[1], 
+          uptime[2], 
           timeps[2], 
           timeps[1], 
           timeps[0]
