@@ -1,1 +1,1 @@
-node main.js TOKEN APP_ID
+node launch.js TOKEN APP_ID

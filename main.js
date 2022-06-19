@@ -490,24 +490,30 @@ var command_set = {
       return await interaction.reply({embeds: [make_norches_message(gtsf("norches-login.error.na", lng, []), lng)]});
     } else {
       var i = [0, false];
-      while(i[0] < sprivate.login_codes.length) {
+      while(i[0] < sprivate.login_codes.length && !i[1]) {
         var codeData = sprivate.login_codes[i[0]];
-        console.log(codeData, codeData[0], codeData[1]);
         if(codeData[0] == playerCode) {
+          console.log("Found player. Code: %d ; Player: %s", codeData[0], codeData[1]);
           i[1] = true;
           var toSend = {
             type: "whitelistSet",
             playerName: codeData[1],
             key: securityLayerKey,
+            force: false,
             whitelistFlag: true
           };
+          console.log("Sending whitelist request to server");
           serverSocketConnection.send(JSON.stringify(toSend));
           sprivate.login_codes[i[0]] = null;
+          save_private();
         }
+        i[0]++;
       }
       if(i[1]) {
+        console.log("Adding player role")
         var playerRole = interaction.guild.roles.cache.get(roles.player);
         interaction.member.roles.add(playerRole);
+        console.log("norches-login success");
         return await interaction.reply({embeds: [make_norches_message(gtsf("norches-login.success", lng, []), lng)]});
       } else {
         return await interaction.reply({embeds: [make_norches_message(gtsf("norches-login.error.notfound", lng, []), lng)]});
