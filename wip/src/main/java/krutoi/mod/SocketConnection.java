@@ -132,7 +132,7 @@ public class SocketConnection extends WebSocketServer {
                             Boolean whitelistFlag = j.get("whitelistFlag").getAsBoolean();
                             String UUIDkey = j.get("key").getAsString();
                             
-                            if(UUIDkey == userKey && isKeySent) {
+                            if(!(UUIDkey == userKey && isKeySent)) {
                                 ConsoleCommandSender c = plugin.getServer().getConsoleSender(); 
                                 new BukkitRunnable() {
                                     @Override
@@ -176,15 +176,12 @@ public class SocketConnection extends WebSocketServer {
     public void onMessage(WebSocket connection, ByteBuffer message){
         switch (message.toString()){
             case "tps": {
-                connection.send("TPS command");
                 break;
             }
             case "list": {
-                connection.send("List command");
                 break;
             }
             default: {
-                plugin.getLogger().info("WebSocket connection has message for you: " + message.toString());
                 break;
             }
         }
