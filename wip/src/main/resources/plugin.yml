@@ -1,7 +1,7 @@
 main: krutoi.mod.App
 name: KrutoiMod
-version: 0.1,
-api-version: 1.18
+version: 0.1
+api-version: 1.19
 commands:
   gravity:
     description: Disables or enables gravity for player or yourself. 
