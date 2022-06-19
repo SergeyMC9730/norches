@@ -116,21 +116,42 @@ public class SocketConnection extends WebSocketServer {
                             break;  
                         }
                         case "sendKey": {
+                            plugin.getLogger().info("Client tries to send key.");
                             if(!isKeySent) {
                                 isKeySent = true;
                                 userKey = j.get("userKey").getAsString();
+                                plugin.getLogger().info("Key set successfull.");
+                            } else {
+                                plugin.getLogger().info("Client already sent key. Is someone hacking?");
                             }
                             break;
                         }
                         case "whitelistSet": {
+                            plugin.getLogger().info("Client tries to whitelist player");
                             String playerName = j.get("playerName").getAsString();
                             Boolean whitelistFlag = j.get("whitelistFlag").getAsBoolean();
                             String UUIDkey = j.get("key").getAsString();
                             
                             if(UUIDkey == userKey && isKeySent) {
-                                Player p = plugin.getServer().getPlayerExact(playerName);
-                                if(p == null) return;
-                                p.setWhitelisted(whitelistFlag);
+                                ConsoleCommandSender c = plugin.getServer().getConsoleSender(); 
+                                new BukkitRunnable() {
+                                    @Override
+                                    public void run() {
+                                        plugin.getLogger().info("Adding or removing player to whitelist...");
+                                        plugin.getServer().dispatchCommand(c, "whitelist on");
+                                        boolean isCommandSuccessful;
+                                        if(whitelistFlag) {
+                                            isCommandSuccessful = plugin.getServer().dispatchCommand(c, String.format("whitelist add %s", playerName));
+                                        } else {
+                                            isCommandSuccessful = plugin.getServer().dispatchCommand(c, String.format("whitelist remove %s", playerName));
+                                        }
+
+                                        plugin.getLogger().info("[WHITELIST] isCommandSuccessful 0 state: " + isCommandSuccessful);      
+                                    }
+                                }.runTask(plugin);
+                                plugin.getLogger().info("Player was whitelisted!");
+                            } else {
+                                plugin.getLogger().info("Key sent by client is invalid. Request denied.");
                             }
 
                             break;
