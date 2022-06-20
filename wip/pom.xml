@@ -5,13 +5,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>krutoi.mod</groupId>
-  <artifactId>wip</artifactId>
-  <version>0.0</version>
+  <artifactId>NorchesProtocol</artifactId>
+  <version>1.19</version>
   <packaging>jar</packaging>
 
-  <name>wip</name>
+  <name>NorchesProtocol</name>
   <!-- FIXME change it to the project's website -->
-  <url>http://www.example.com</url>
+  <url>http://sorry.dogotrigger.xyz</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
