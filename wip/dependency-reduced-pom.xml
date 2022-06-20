@@ -4,7 +4,7 @@
   <groupId>krutoi.mod</groupId>
   <artifactId>NorchesProtocol</artifactId>
   <name>NorchesProtocol</name>
-  <version>1.19</version>
+  <version>1.18.2</version>
   <url>http://sorry.dogotrigger.xyz</url>
   <build>
     <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
@@ -105,9 +105,13 @@
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
-      <version>1.19-R0.1-SNAPSHOT</version>
+      <version>1.18-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
       <exclusions>
+        <exclusion>
+          <artifactId>commons-lang</artifactId>
+          <groupId>commons-lang</groupId>
+        </exclusion>
         <exclusion>
           <artifactId>guava</artifactId>
           <groupId>com.google.guava</groupId>

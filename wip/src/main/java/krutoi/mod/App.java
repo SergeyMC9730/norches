@@ -30,7 +30,7 @@ public class App extends JavaPlugin implements Listener {
     public TPS tps;
     public Lag lag;
     public boolean isNorchesBuild = true;
-    public short port = 25653;
+    public short port = 25814;
     public Tools tools;
     public BukkitTask playerCheckTask;
     public int uptime_A;
