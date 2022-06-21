@@ -240,10 +240,10 @@ var client = new Client({intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MES
 var is_ready = false;
 
 var make_bank_message = (message, lng) => {
-  return new MessageEmbed().setColor('#0099ff').addFields({ name: gtsf("header.bank", lng, []), value: message }).setTimestamp();
+  return new MessageEmbed().setColor('#2f3136').addFields({ name: gtsf("header.bank", lng, []), value: message }).setTimestamp();
 }
 var make_norches_message = (message) => {
-  return new MessageEmbed().setColor('#0099ff').addFields({ name: 'Norches', value: message }).setTimestamp();
+  return new MessageEmbed().setColor('#2f3136').addFields({ name: 'Norches', value: message }).setTimestamp();
 }
 
 setInterval(() => {
@@ -386,7 +386,7 @@ setInterval(() => {
       }
     }
     i++;
-  })
+  });
 }, 60 * 1000); //scheduler
 
 var roleCheck = (rid = "", rc = "") => {return rc.some(role => role.id == rid);}
@@ -533,6 +533,9 @@ var command_set = {
         setTimeout(() => {interaction.deleteReply()}, 10 * 1000);
       }
     }
+  },
+  "bank-ncoin-buy": async (interaction) => {
+    return await interaction.reply({embeds: [make_norches_message("Wait **1.1**...")]});
   },
   "bank-changebalance": async (interaction) => {
     if(interaction.guild.id != "927851863146102804") return await interaction.reply({embeds: [make_norches_message("**Ошибка!**\nЗа пределами сервера разрешены **лишь команды без возможности записи данных**, чтобы не допустить *несанкционированного доступа к данным приватного сервера!*")]});
@@ -808,7 +811,7 @@ var command_set = {
   "bank-schedule": async (interaction) => {
     if(interaction.guild.id != "927851863146102804") return await interaction.reply({embeds: [make_norches_message("**Ошибка!**\nЗа пределами сервера разрешены **лишь команды без возможности записи данных**, чтобы не допустить *несанкционированного доступа к данным приватного сервера!*")]});
 
-    if(roleCheck(roles.bank.base, user_roles) || roleCheck(roles.police, user_roles)){
+    if(roleCheck(roles.bank.base, user_roles) || roleCheck(roles.police, user_roles) || roleCheck("927917394981158973", user_roles)){
       var user = interaction.options.getUser("user", true);
       var action = interaction.options.getString("action", true);
       var value = interaction.options.getInteger("value", true);
