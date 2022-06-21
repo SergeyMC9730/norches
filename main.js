@@ -91,7 +91,8 @@ var roles = {
   },
   police: "950039874180890644",
   bot_admin: "320888908785385472",
-  admin: "927916967338344508"
+  admin: "927916967338344508",
+  guest: "928319600377081916"
 }
 
 //get translated string formatted
@@ -201,9 +202,9 @@ var update_commands = () => {
     sprivate.guilds.forEach((g) => {
       if (g !== "removed") {
         try {
-          console.log("Updating on %s ... ", g.id);
+          process.stdout.write(format("\nUpdating on %s ... ", g.id))
           rest.put(Routes.applicationGuildCommands(clientid, g.id), { body: settings.commands });
-          process.stdout.write(" Updated.\n");
+          process.stdout.write(" Updated.");
         } catch (err) {
           console.error(err);
         }
@@ -230,8 +231,9 @@ var read_private = () => {
 }
 
 
-var { Client, Intents, MessageEmbed, CommandInteraction } = require('discord.js');
+var { Client, Intents, MessageEmbed, CommandInteraction, Util } = require('discord.js');
 const { stdout } = require("process");
+const { format } = require("util");
 var client = new Client({intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]});
 
 var is_ready = false;
@@ -298,7 +300,7 @@ client.on('ready', () => {
 //norches-info - Everyone
 //norches-ben - Everyone
 //norches-patch - Bot Admin
-//norches-login - Everyone
+//norches-login - Guest
 //norches-generate-code - Admin
 
 var command_list = [];
@@ -386,7 +388,7 @@ setInterval(() => {
   })
 }, 60 * 1000) //scheduler
 
-var roleCheck = (rid, rc) => {return rc.some(role => role.id == rid);}
+var roleCheck = (rid = "", rc = "") => {return rc.some(role => role.id == rid);}
 
 var command_set = {
   "bank-changestatus": async (interaction) => {
@@ -483,40 +485,51 @@ var command_set = {
    * @param {CommandInteraction} interaction
    */
    "norches-login": async (interaction) => {
+    if(!roleCheck(roles.guest, user_roles)){
+      return await interaction.reply({embeds: [make_norches_message(gtsf("norches.access-denied", lng, []))]}); 
+    }
+ 
     var playerCode = interaction.options.getInteger("code");
     read_private();
 
     if(!isOpen) {
-      return await interaction.reply({embeds: [make_norches_message(gtsf("norches-login.error.na", lng, []), lng)]});
+      await interaction.reply({embeds: [make_norches_message(gtsf("norches-login.error.na", lng, []), lng)]});
+      setTimeout(() => {interaction.deleteReply()}, 10 * 1000);
     } else {
       var i = [0, false];
       while(i[0] < sprivate.login_codes.length && !i[1]) {
         var codeData = sprivate.login_codes[i[0]];
-        if(codeData[0] == playerCode) {
-          console.log("Found player. Code: %d ; Player: %s", codeData[0], codeData[1]);
-          i[1] = true;
-          var toSend = {
-            type: "whitelistSet",
-            playerName: codeData[1],
-            key: securityLayerKey,
-            force: false,
-            whitelistFlag: true
-          };
-          console.log("Sending whitelist request to server");
-          serverSocketConnection.send(JSON.stringify(toSend));
-          sprivate.login_codes[i[0]] = null;
-          save_private();
+        if(`${codeData}` != `null`) {
+          if(codeData[0] == playerCode) {
+            console.log("Found player. Code: %d ; Player: %s", codeData[0], codeData[1]);
+            i[1] = true;
+            var toSend = {
+              type: "whitelistSet",
+              playerName: codeData[1],
+              key: securityLayerKey,
+              force: false,
+              whitelistFlag: true
+            };
+            console.log("Sending whitelist request to server");
+            serverSocketConnection.send(JSON.stringify(toSend));
+            sprivate.login_codes[i[0]] = null;
+            save_private();
+          }
         }
         i[0]++;
       }
       if(i[1]) {
         console.log("Adding player role")
         var playerRole = interaction.guild.roles.cache.get(roles.player);
+        var guestRole  = interaction.guild.roles.cache.get(roles.guest);
         interaction.member.roles.add(playerRole);
+        interaction.member.roles.remove(guestRole);
         console.log("norches-login success");
-        return await interaction.reply({embeds: [make_norches_message(gtsf("norches-login.success", lng, []), lng)]});
+        await interaction.reply({embeds: [make_norches_message(gtsf("norches-login.success", lng, []), lng)]})
+        setTimeout(() => {interaction.deleteReply()}, 10 * 1000);
       } else {
-        return await interaction.reply({embeds: [make_norches_message(gtsf("norches-login.error.notfound", lng, []), lng)]});
+        await interaction.reply({embeds: [make_norches_message(gtsf("norches-login.error.notfound", lng, []), lng)]});
+        setTimeout(() => {interaction.deleteReply()}, 10 * 1000);
       }
     }
   },
