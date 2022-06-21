@@ -2,7 +2,7 @@ var markovc = require("markov-chain-nlg");
 var { REST } = require('@discordjs/rest');
 var { Routes } = require('discord-api-types/v9');
 var fs = require("fs");
-var settings = JSON.parse(fs.readFileSync("settings.json").toString("utf8"));
+var settings = require("./settings.json")
 var ws = require("ws");
 var langlist = require("./lang.json");
 const { randomUUID, randomInt } = require("crypto");
@@ -22,7 +22,7 @@ if (!String.prototype.format) {
 
 var token = process.argv[2];
 var clientid = process.argv[3];
-var libpaint = require("./libpaint/main")
+var libpaint = require("./libpaint/main");
 
 var uptime = [0, 0, 0];
 
@@ -32,7 +32,7 @@ if(settings.print_appid) console.log("app id: %s", clientid);
 var rest = new REST({ version: '9' }).setToken(token);
 
 if (!fs.existsSync("private.json")) {
-  fs.writeFileSync("private.json", JSON.stringify({ guilds: [], bank: { ncoin: { value: 0, history: [] }, players: [], timers: [] }, xp: { users: [], data: [] }, server: {WebSocketIP: "", WebSocketPort: 0}, blocklist: [], private_revision: settings.private_revision }));
+  fs.writeFileSync("private.json", JSON.stringify({ guilds: [], bank: { ncoin: { value: 0, history: [] }, players: [], timers: [] }, xp: { users: [], data: [] }, server: {WebSocketIP: "", WebSocketPort: 0}, blocklist: [], login_codes: [], private_revision: settings.private_revision }));
   console.log("private.json was made. Please, configure it.");
   process.exit(0);
 }
@@ -82,7 +82,6 @@ var serverSocketConnection;
 var latestSocketData = "";
 var latestRequest = "";
 
-var kazna = 2108;
 var roles = {
   player: "927918475878498364",
   bank: {
@@ -101,14 +100,14 @@ var gtsf = (s = "", l = "", f = ["", 0, true]) => {
   f.forEach((ff) => {
     updlist.push(`"${ff}"`);
   });
-  if(!Object.keys(langlist).includes(l)) return "Error\nUnable to **find translation** provided **by `l` argument**";
-  if(!Object.keys(langlist[l]).includes(s)) return "Error\nUnable to **find string** provided **by `s` argument**";
+  if(!Object.keys(langlist).includes(l)) return langlist.failback.noL;
+  if(!Object.keys(langlist[l]).includes(s)) return langlist.failback.noS;
   var result = "";
   eval(`result = langlist[l][s].format(${updlist.toString()})`);
   return result;
 }
 var getCurrency = (lang = "") => {
-  if(!Object.keys(settings.bank.currency).includes(lang)) return "Error\nUnable to **find translation** provided **by `lang` argument**";
+  if(!Object.keys(settings.bank.currency).includes(lang)) return langlist.failback.noL;
   return settings.bank.currency[lang];
 }
 
@@ -150,27 +149,27 @@ setTimeout(() => {
         serverSocketConnection.send(JSON.stringify({
           "type": "sendKey",
           "userKey": securityLayerKey
-        }))
+        }));
         console.log("Successfully connected to the server");
-      })
+      });
       serverSocketConnection.on('error', (ws, err) => {
         isOpen = false;
         console.log("Unable to connect to the server: %s", err);
         return;
-      })
+      });
       serverSocketConnection.on("close", (ws, code, reason) => {
         isOpen = false;
         console.log("Server connection closed");
         return;
-      })
+      });
       serverSocketConnection.on("message", (data, isBinary) => {
         if(latestRequest == "tps"){
-          latestSocketData = parseFloat(data.toString()).toPrecision(3)  
+          latestSocketData = parseFloat(data.toString()).toPrecision(3);
         } else {
           latestSocketData = data.toString();
         }
         serverOnMessageTrigger = true;
-      })
+      });
     } else {
       console.log("Unable to connect to the server");
     }
@@ -180,7 +179,7 @@ setTimeout(() => {
 }, 100);
 
 setTimeout(() => {
-  console.log("Connecting to SQL...");
+  if(settings.sql_support) console.log("Connecting to SQL...");
   sql.init();
 }, 100);
 
@@ -194,6 +193,7 @@ var update_commands = () => {
           rest.put(Routes.applicationGuildCommands(clientid, g.id), { body: settings.commands });
           process.stdout.write(" Updated.\n");
         } catch (err) {
+          fs.writeFileSync("error.log", err);
           console.error(err);
         }
       }
@@ -202,10 +202,11 @@ var update_commands = () => {
     sprivate.guilds.forEach((g) => {
       if (g !== "removed") {
         try {
-          process.stdout.write(format("\nUpdating on %s ... ", g.id))
+          process.stdout.write(format("\nUpdating on %s ... ", g.id));
           rest.put(Routes.applicationGuildCommands(clientid, g.id), { body: settings.commands });
           process.stdout.write(" Updated.");
         } catch (err) {
+          fs.writeFileSync("error.log", err);
           console.error(err);
         }
       }
@@ -227,11 +228,11 @@ var save_private = () => {
   fs.writeFileSync("private.json", JSON.stringify(sprivate));
 }
 var read_private = () => {
-  sprivate = JSON.parse(fs.readFileSync("private.json").toString("utf8"))
+  sprivate = JSON.parse(fs.readFileSync("private.json").toString("utf8"));
 }
 
 
-var { Client, Intents, MessageEmbed, CommandInteraction, Util } = require('discord.js');
+var { Client, Intents, MessageEmbed, CommandInteraction } = require('discord.js');
 const { stdout } = require("process");
 const { format } = require("util");
 var client = new Client({intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]});
@@ -249,7 +250,7 @@ setInterval(() => {
   if(is_ready){
     client.user.setStatus("dnd");
     var gen = markovc.generate(150);
-    client.user.setActivity({name: (gen.length < 4) ? "Ошибка" : gen, type: "COMPETING"})
+    client.user.setActivity({name: (gen.length < 4) ? "Ошибка" : gen, type: "COMPETING"});
   }
 }, 10 * 1000);
 
@@ -386,7 +387,7 @@ setInterval(() => {
     }
     i++;
   })
-}, 60 * 1000) //scheduler
+}, 60 * 1000); //scheduler
 
 var roleCheck = (rid = "", rc = "") => {return rc.some(role => role.id == rid);}
 
@@ -442,8 +443,6 @@ var command_set = {
     var name = interaction.options.getString('name');
     var id = Math.round(Math.random() * 8192);
     if(libbank.get_bank_account(user.id).is_valid == false || libbank.get_bank_account(user.id).player_object[6] == false) {
-
-
       // 0 - discord id
       // 1 - mc nickname
       // 2 - account name
@@ -471,6 +470,7 @@ var command_set = {
    * @param {CommandInteraction} interaction
    */
    "norches-generate-code": async (interaction) => {
+    if(interaction.guild.id != "927851863146102804") return await interaction.reply({embeds: [make_norches_message("**Ошибка!**\nЗа пределами сервера разрешены **лишь команды без возможности записи данных**, чтобы не допустить *несанкционированного доступа к данным приватного сервера!*")]});
     if(!roleCheck(roles.admin, user_roles)) return await interaction.reply({embeds: [make_norches_message(gtsf("norches.access-denied", lng, []), lng)]});
 
     var playerNickname = interaction.options.getString("playernickname", true);
@@ -485,6 +485,7 @@ var command_set = {
    * @param {CommandInteraction} interaction
    */
    "norches-login": async (interaction) => {
+    if(interaction.guild.id != "927851863146102804") return await interaction.reply({embeds: [make_norches_message("**Ошибка!**\nЗа пределами сервера разрешены **лишь команды без возможности записи данных**, чтобы не допустить *несанкционированного доступа к данным приватного сервера!*")]});
     if(!roleCheck(roles.guest, user_roles)){
       return await interaction.reply({embeds: [make_norches_message(gtsf("norches.access-denied", lng, []))]}); 
     }
@@ -605,7 +606,7 @@ var command_set = {
   "bank-info": async (interaction) => {
     //create image
     var icon = "";
-    if(sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length - 1] == sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length - 2]) icon = "⏺️"
+    if(sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length - 1] == sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length - 2]) icon = "⏺️";
     else {
       icon = (sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length - 1] > sprivate.bank.ncoin.history[sprivate.bank.ncoin.history.length - 2]) ? "🔼" : "⬇️";
     }
@@ -680,12 +681,13 @@ var command_set = {
    * @param {CommandInteraction} interaction
    */
   "norches-test": async (interaction) => {
+    if(interaction.guild.id != "927851863146102804") return await interaction.reply({embeds: [make_norches_message("**Ошибка!**\nЗа пределами сервера разрешены **лишь команды без возможности записи данных**, чтобы не допустить *несанкционированного доступа к данным приватного сервера!*")]});
     var actionID = interaction.options.getInteger("action", true);
     switch (actionID) {
       case 0: {
         sql.selecttable("keydata");
         var r = await sql.getstructure();
-        if(!r) {
+        if(!r && !settings.sql_support) {
           interaction.reply({embeds: [make_norches_message(gtsf("norches-test.error", lng, []))], ephemeral: false});
         } else {
           console.log(r);
@@ -933,6 +935,7 @@ var command_set = {
     }
   },
   "bank-reset": async (interaction) => {
+    if(interaction.guild.id != "927851863146102804") return await interaction.reply({embeds: [make_norches_message("**Ошибка!**\nЗа пределами сервера разрешены **лишь команды без возможности записи данных**, чтобы не допустить *несанкционированного доступа к данным приватного сервера!*")]});
     if(!interaction.user.id == roles.bot_admin) {
       return await interaction.reply({embeds: [make_bank_message(gtsf("norches.access-denied", lng, []), lng)]}); 
     }
@@ -942,6 +945,7 @@ var command_set = {
     return await interaction.reply({embeds: [make_bank_message(gtsf("bank-reset.success", lng, []), lng)]});
   },
   "norches-donationevent-test": async (interaction) => {
+    if(interaction.guild.id != "927851863146102804") return await interaction.reply({embeds: [make_norches_message("**Ошибка!**\nЗа пределами сервера разрешены **лишь команды без возможности записи данных**, чтобы не допустить *несанкционированного доступа к данным приватного сервера!*")]});
     var action = interaction.options.getInteger("action", true);
     var size = interaction.options.getInteger("size", true);
     var author = interaction.options.getString("author", true);

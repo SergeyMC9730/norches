@@ -9,3 +9,4 @@ logs.log
 download_private.sh
 runsystemctl.sh
 forsystemctl.sh
+error.log

@@ -1,5 +1,9 @@
 {
     "additional": ["ru", "en"],
+    "failback": {
+        "noL": "Error\nUnable to **find translation** provided **by `l` argument**",
+        "noS": "Error\nUnable to **find string** provided **by `s` argument**"
+    },
     "ru": {
         "header.bank": "Банк",
 
