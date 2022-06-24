@@ -90,12 +90,28 @@
 							"value": "add"
 						},
 						{
-							"name": "Remove",
-							"value": "remove"
+							"name": "Trasfer",
+							"value": "transfer"
 						},
 						{
 							"name": "Set",
 							"value": "set"
+						}
+					],
+					"required": true
+				},
+				{
+					"type": 3,
+					"name": "actiontype",
+					"description": "Type of action",
+					"choices": [
+						{
+							"name": "Phantom Membrane",
+							"value": "pm"
+						},
+						{
+							"name": "NCoin",
+							"value": "nc"
 						}
 					],
 					"required": true
@@ -107,11 +123,17 @@
 					"required": true
 				},
 				{
-					"type": 3,
-					"name": "id2rem",
-					"description": "Bank account ID to removing.",
-					"required": true
+					"type": 4,
+					"name": "id1",
+					"description": "Main Bank account ID",
+					"required": false
 					
+				},
+				{
+					"type": 4,
+					"name": "id2",
+					"description": "Additional ID if necessary",
+					"required": false
 				}
 			]
 		},
@@ -259,18 +281,6 @@
 			"description": "Patches code in real time (patch.json => patch.js)"
 		},
 		{
-			"name": "bank-ncoin-buy",
-			"description": "Buy NCoin",
-			"options": [
-				{
-					"type": 4,
-					"name": "count",
-					"description": "NCoin count",
-					"required": true
-				}
-			]
-		},
-		{
 			"name": "bank-convert",
 			"description": "Converts account to new format",
 			"options": [
@@ -376,7 +386,7 @@
 							"value": 3
 						},
 						{
-							"name": "Bats",
+							"name": "Summon Bats",
 							"value": 4
 						}
 					],
@@ -413,7 +423,7 @@
 	"print_token": false,
 	"print_appid": false,
 	"scheduler": true,
-	"debugger": false,
+	"debugger": true,
 	"bank": {
 		"currency": {
 			"ru": "Мембрана фантома",

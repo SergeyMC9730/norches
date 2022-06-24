@@ -6,7 +6,7 @@ var save_private = () => {
     fs.writeFileSync("private.json", JSON.stringify(sprivate));
 }
 var read_private = () => {
-    sprivate = JSON.parse(fs.readFileSync("private.json").toString("utf8"))
+    sprivate = JSON.parse(fs.readFileSync("private.json").toString("utf8"));
 }
 
 var get_bank_account = (id = "", type = 0) => {
@@ -16,14 +16,14 @@ var get_bank_account = (id = "", type = 0) => {
         case 0: { //discord id
             var i = 0;
             sprivate.bank.players.forEach((p) => {
-                if(p[0] === id && p[6] == true) res = {player_object: p, is_valid: true, counter: i};
+                if(`${p}` != `null`) if(p[0] === id && p[6] == true) res = {player_object: p, is_valid: true, counter: i};
                 i++;
             });
         }
         case 1: { //account id
             var i = 0;
             sprivate.bank.players.forEach((p) => {
-                if(p[4][0].bid === id && p[6] == true) res = {player_object: p, is_valid: true, counter: i};
+                if(`${p}` != `null`) if(p[4][0].bid === id && p[6] == true) res = {player_object: p, is_valid: true, counter: i};
                 i++;
             });
         }
@@ -41,7 +41,7 @@ var remove_bank_account = (id = "") => {
     var b = get_bank_account(id);
     if(b.is_valid == false) return -1;
     if(b.player_object[6] == false) return -1;
-    sprivate.bank.players[b.counter][6] = false;
+    sprivate.bank.players[b.counter] = null;
     save_private();
     return b.counter;
 }

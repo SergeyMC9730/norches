@@ -716,7 +716,7 @@ var command_set = {
     var user = interaction.user;
     var lang = interaction.options.getString("lang", true);
     if(!libbank.get_bank_account(user.id, 0).is_valid){
-      return await interaction.reply({embeds: [make_bank_message(gtsf("bank.account.doesnotexist", lang, []), lang)]});
+      return await interaction.reply({embeds: [make_bank_message(gtsf("bank.account.doesnotexists", lang, []), lang)]});
     }
     if(!roleCheck(roles.player, user_roles)){
       return await interaction.reply({embeds: [make_bank_message(gtsf("norches.access-denied", lang, []), lng)]});
@@ -789,7 +789,7 @@ var command_set = {
   "bank-getaccount": async (interaction) => {
     var user = interaction.options.getUser("user", false);
     if(user == null) user = interaction.user;
-    if(libbank.get_bank_account(user.id).is_valid == true && libbank.get_bank_account(user.id).player_object[6] == true){
+    if(libbank.get_bank_account(user.id).is_valid == true){
       var b = libbank.get_bank_account(user.id);
       interaction.reply({embeds: [make_bank_message(gtsf("bank-getaccount.success", lng, [
         (b.player_object[5] === null) ? b.player_object[4][0].bid : b.player_object[5],
@@ -840,7 +840,7 @@ var command_set = {
       //structure of timer
       //{start_time: unix_time, end_time: unix_time, action: string, id: number, warn_message: string, arguments: []}
       save_private();
-      await interaction.reply({embeds: [make_bank_message("bank-schedule.success", lng, [sid])]});
+      await interaction.reply({embeds: [make_bank_message(gtsf("norches.success", lng, []), lng, [sid])]});
     } else {
       return await interaction.reply({embeds: [make_bank_message(gtsf("norches.access-denied", lng, []), lng)]}); 
     }
@@ -986,6 +986,7 @@ var command_set = {
       sprivate.bank.players[counter][3] = 0;
       sprivate.bank.players[counter][10] = Date();
       sprivate.bank.players[libbank.get_bank_account("347601456343285760", 0).counter][10] = sprivate.bank.players[counter][10];
+      sprivate.bank.players[counter] = null;
 
       save_private();
       await interaction.reply({embeds: [make_bank_message(gtsf("bank-deleteaccount.success", lng, []), lng)]});
@@ -1011,7 +1012,24 @@ var command_set = {
 var user_roles;
 var lng;
 
+var currentInteraction;
+
+process.on('uncaughtException', async (err) => {
+  if(interaction.replied) {
+    return await interaction.followUp({
+      embeds: [make_norches_message(`\`\`\`js\n${err}\n\`\`\``)],
+      ephemeral: !settings.debugger
+    });
+  } else {
+    return await currentInteraction.reply({
+      embeds: [make_norches_message(`\`\`\`js\n${err}\n\`\`\``)],
+      ephemeral: !settings.debugger
+    });
+  }
+});
+
 client.on('interactionCreate', async interaction => {
+  read_private();
   if (!interaction.isCommand()) return;
   if (command_list.includes(interaction.commandName) && sprivate.blocklist.includes(interaction.user.id)) {
     return await interaction.reply({
@@ -1024,14 +1042,23 @@ client.on('interactionCreate', async interaction => {
   lng = "en";
   if(libbank.get_bank_account(interaction.user.id, 0).is_valid && libbank.get_bank_account(interaction.user.id, 0).player_object[8] == "1.0") lng = libbank.get_bank_account(interaction.user.id, 0).player_object[11];
 
-  if(settings.debugger){
-    console.log(roleCheck(roles.bank.base, user_roles), roleCheck(roles.bank.main, user_roles));
-    console.log(roleCheck(roles.player, user_roles));
-    console.log(roleCheck(roles.police, user_roles));
-    console.log(interaction.user.id == roles.bot_admin);
-  }
+  currentInteraction = interaction;
 
-  if(command_list.includes(interaction.commandName)) command_set[interaction.commandName](interaction);
+  try {
+    if(command_list.includes(interaction.commandName)) command_set[interaction.commandName](interaction);
+  } catch (err) {
+    if(interaction.replied) {
+      return await interaction.followUp({
+        embeds: [make_norches_message(`\`\`\`js\n${err}\n\`\`\``)],
+        ephemeral: !settings.debugger
+      });
+    } else {
+      return await currentInteraction.reply({
+        embeds: [make_norches_message(`\`\`\`js\n${err}\n\`\`\``)],
+        ephemeral: !settings.debugger
+      });
+    }
+  }
 });
 client.on("guildCreate", async (guild) => {
   read_private();
