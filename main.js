@@ -31,6 +31,17 @@ if(settings.print_appid) console.log("app id: %s", clientid);
 
 var rest = new REST({ version: '9' }).setToken(token);
 
+if(!fs.existsSync("input_result.txt")) {
+  var inputResultTmp = "";
+  var inputResultTmpi = 0;
+  while(inputResultTmpi < 128) {
+    inputResultTmp += `Sample Text ${inputResultTmpi}\n`;
+    inputResultTmpi++;
+  }
+  fs.writeFileSync("input_result.txt", inputResultTmp);
+  console.log("input_result.txt was made. Replace \"Sample Text\" with your own data if it possible.");
+}
+
 if (!fs.existsSync("private.json")) {
   fs.writeFileSync("private.json", JSON.stringify({ guilds: [], bank: { ncoin: { value: 0, history: [] }, players: [], timers: [] }, xp: { users: [], data: [] }, server: {WebSocketIP: "", WebSocketPort: 0}, blocklist: [], login_codes: [], private_revision: settings.private_revision }));
   console.log("private.json was made. Please, configure it.");
@@ -250,7 +261,7 @@ setInterval(() => {
   if(is_ready){
     client.user.setStatus("dnd");
     var gen = markovc.generate(150);
-    client.user.setActivity({name: (gen.length < 4) ? "Ошибка" : gen, type: "COMPETING"});
+    client.user.setActivity({name: (gen.length < 4) ? "Ошибка (Error)" : gen, type: "COMPETING"});
   }
 }, 10 * 1000);
 
@@ -283,8 +294,8 @@ client.on('ready', () => {
 //Permissions
 //bank-changestatus - Player
 //bank-createaccount - Bank
-//bank-changebalance (Remove) - Player
-//bank-changebalance (Add, Set) - Bank
+//bank-changebalance (pm/nc) (Transfer) - Player
+//bank-changebalance (pm/nc) (Add, Set) - Bank
 //bank-schedule - Bank, Police
 //gen - Everyone
 //xp - Everyone
@@ -448,7 +459,7 @@ var command_set = {
       // 2 - account name
       // 3 - balance
       // 4 - linked bank and discord ids (only supports Professional account)
-      // 5 - placeholder
+      // 5 - unused
       // 6 - is account has not been suspended?
       // 7 - account type
       // 8 - account version
@@ -535,23 +546,25 @@ var command_set = {
     }
   },
   "bank-ncoin-buy": async (interaction) => {
-    return await interaction.reply({embeds: [make_norches_message("Wait **1.1**...")]});
+    return await interaction.reply({embeds: [make_norches_message("Command is moved into bank-changebalance argument")]});
   },
   "bank-changebalance": async (interaction) => {
     if(interaction.guild.id != "927851863146102804") return await interaction.reply({embeds: [make_norches_message("**Ошибка!**\nЗа пределами сервера разрешены **лишь команды без возможности записи данных**, чтобы не допустить *несанкционированного доступа к данным приватного сервера!*")]});
 
     read_private();
-    var id1 = interaction.user.id;
-    var id2 = interaction.options.getString("id2rem", true);
+    var id1 = interaction.options.getString("id1", true);
+    var id2 = interaction.options.getString("id2", true);
     var action = interaction.options.getString("action", true);
+    var actionType = interaction.options.getString("actiontype", true);
     var value = interaction.options.getInteger("value", true);
 
     if(value < 0) value = 0;
+
+    if(libbank.check_access())
     
-    if(libbank.get_bank_account(id1, 0).is_valid == false){
+    if(libbank.get_bank_account(id1, 1).is_valid == false){
       return await interaction.reply({embeds: [make_bank_message(gtsf("bank.account.doesnotexists", lng, []), lng)]}); 
     } else {
-      id1 = libbank.get_bank_account(interaction.user.id, 0).player_object[4][0].bid;
       switch(action){
         case "set": {
           if(!roleCheck(roles.bank.base, user_roles)){
