@@ -419,20 +419,14 @@
 			]
 		}
 	],
-	"xp": 8,
 	"print_token": false,
 	"print_appid": false,
 	"scheduler": true,
 	"debugger": true,
 	"bank": {
-		"currency": {
-			"ru": "Мембрана фантома",
-			"en": "Phantom Membrane"
-		},
 		"version": "1.0"
 	},
 	"private_revision": 5,
-	"benLookupTable": ["No", "Ewwww", "Be-be-be ...", "Ho-ho-ho", "Yes"],
 	"custom_guilds": false,
 	"sql_support": false
 }

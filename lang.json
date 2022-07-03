@@ -1,8 +1,9 @@
 {
-    "additional": ["ru", "en"],
-    "failback": {
-        "noL": "Error\nUnable to **find translation** provided **by `l` argument**",
-        "noS": "Error\nUnable to **find string** provided **by `s` argument**"
+    "universal": {
+        "norches.lang": ["ru", "en"],
+        "norches.ben": ["No", "Ewwww", "Be-be-be ...", "Ho-ho-ho", "Yes"],
+        "norches.lang.error.lang": "Error\nUnable **to find translation set** provided by `l` argument",
+        "norches.lang.error.string": "Error\nUnable **to find translation string** provided by `s` argument"
     },
     "ru": {
         "header.bank": "Банк",
@@ -18,12 +19,17 @@
         "bank-createaccount.own.success": "**Ваш аккаунт был успешно создан!**\nID аккаунта: **`{0}`**",
         "bank-createaccount.success": "**Аккаунт был успешно создан!**\nID аккаунта: **`{0}`**",
         "bank-createaccount.exists": "Извините!\nДанный аккаунт **уже был создан!**",
+        "bank.currency": "Мембрана фантома",
 
         "norches.access-denied": "Извините!\nУ вас **нет прав на выполнение данной команды!**",
         "norches.blocked": "ratio",
         "norches.crash": "Norches Бот крашнулся по ошибке ",
         "norches.recovery": "Запуск Резервного бота",
         "norches.server.na": "Извините!\nНе удалось **подключиться к серверу!**",
+
+        "norches.command.question.undone": "Вы точно хотите выполнить данную команду?\nДанное действие **невозможно отменить**",
+        "norches.command.question.yes": "Да",
+        "norches.command.question.no": "Нет",
 
         "bank.account.doesnotexists": "Извините!\nЗапрошенный аккаунт **не существует!**",
         "bank.account.access-denied": "Извините!\nУ Вас **нет доступа к запрошенному аккаунту!**",
@@ -94,6 +100,7 @@
         "bank-createaccount.own.success": "**Your account was successfully created!**\nAccount ID: **`{0}`**",
         "bank-createaccount.success": "**Account was successfully created!**\nAccount ID: **`{0}`**",
         "bank-createaccount.exists": "Error!\nThis account **have already created!**",
+        "bank.currency": "Phantom Membrane",
 
         "norches.access-denied": "Error!\nYou don't have **enough permissions to execute this command!**",
         "norches.blocked": "ratio",
@@ -101,7 +108,11 @@
         "norches.recovery": "Loading the Recovery Bot",
         "norches.server.na": "Error!\nUnable **to connect to the server!**",
 
-        "bank.account.doesnotexists": "Error!\nRequested account **does not exists!**",
+        "norches.command.question.undone": "Do you want to execute this command\nThis action **cannot be undone**",
+        "norches.command.question.yes": "Yes",
+        "norches.command.question.no": "No",
+
+        "bank.account.doesnotexists": "Error!\nRequested account **does not exist!**",
         "bank.account.access-denied": "Error!\nYou don't have **access to requested account!**",
         "bank.account.not-professional": "Error!\nYour account type **is not Professional**",
         "bank.account.type.personal": "Personal",
@@ -131,7 +142,7 @@
         "bank-schedule.error.myself": "Error!\nYou cannot schedule action to **yourself account!**",
         "bank-schedule.success": "Scheduled Action ID: **`{0}`**",
         
-        "bank-unschedule.error": "Error!\nThis scheduled action **does not exists**!",
+        "bank-unschedule.error": "Error!\nThis scheduled action **does not exist**!",
         "bank-unschedule.success": "**Scheduled action was successfully removed!**",
 
         "bank-link.error.myself": "Error!\nYou cannot link **yourself!**",
@@ -154,6 +165,6 @@
 
         "norches-login.success": "You have been **added to the whitelist**.\nGood Game!",
         "norches-login.error.na": "Unable to **send request** to server. Try again later.",
-        "norches-login.error.notfound": "Code you're entered **does not exists!**"
+        "norches-login.error.notfound": "Code you're entered **does not exist!**"
     }
 }
