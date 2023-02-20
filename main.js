@@ -108,7 +108,7 @@ var roles = {
 }
 
 //get translated string formatted
-var gtsf = (s = "", l = "", f = ["", 0, true]) => {
+var gtsf = (s = "", l = "", f = []) => {
   var updlist = [];
   f.forEach((ff) => {
     updlist.push(`"${ff}"`);
@@ -120,7 +120,7 @@ var gtsf = (s = "", l = "", f = ["", 0, true]) => {
   return result;
 }
 var getCurrency = (lang = "") => {
-  return gtsf("bank.currency", lang, []);
+  return gtsf("bank.currency", lang);
 }
 
 var securityLayerKey = "";
